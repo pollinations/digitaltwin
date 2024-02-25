@@ -5,7 +5,9 @@ const handleWebhook = (req, res) => {
   console.log(`Received webhook with token: ${req.query['hub.verify_token']}`);
   console.log("Request Query:", req.query);
   console.log("Request Body:", JSON.stringify(req.body, null, 2));
-
+  
+  if (!req.body)  return;
+  
   if (req.body.object === "whatsapp_business_account" && req.body.entry) {
     req.body.entry.forEach(entry => {
       entry.changes.forEach(change => {
