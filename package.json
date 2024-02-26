@@ -6,7 +6,7 @@
 	"author": "Thomas Haferlach",
 	"type": "module",
 	"scripts": {
-		"start": "watch 'node ./index.js'"
+		"start": "watch 'node ./src/index.js' ./src"
 	},
 	"license": "MIT",
 	"dependencies": {

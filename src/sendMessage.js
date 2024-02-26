@@ -1,17 +1,20 @@
 import WhatsApp from "whatsapp";
 
-console.log("initializing whatsapp with",process.env.WA_PHONE_NUMBER_ID)
+console.log("initializing whatsapp with", process.env.WA_PHONE_NUMBER_ID);
 const wa = new WhatsApp(process.env.WA_PHONE_NUMBER_ID);
 
 const sendMessage = async (message, recipientNumber, mediaUrl = '') => {
   console.log(`Sending message to ${recipientNumber}: ${message} with media URL: ${mediaUrl}`);
   const sentMessage = mediaUrl
-    ? wa.messages.audio({ link: mediaUrl }, recipientNumber)
+    ? wa.messages.audio({ link: mediaUrl, caption: message }, recipientNumber)
     : wa.messages.text({ body: message }, recipientNumber);
 
-  await sentMessage.then(() => {
+  try {
+    await sentMessage;
     console.log("success");
-  });
+  } catch (error) {
+    console.error("Failed to send message:", error);
+  }
 };
 
 export { sendMessage };

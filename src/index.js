@@ -1,16 +1,16 @@
-import './lib/dotenv.js';
-import { messageGenerator } from './lib/messageListener.js';
-import { sendMessage } from './lib/sendMessage.js';
-import { ttsRequest } from './lib/elevenlabs.js';
-import { getChatResponse } from './lib/getChatResponse.js';
-import { addMessage } from './lib/conversations.js';
-import { audioEffects } from './lib/audio.js';
-import { user, assistant } from './lib/getChatResponse.js';
-import { generateAudio } from './lib/musicgen.js';
-import { transcribeAudio } from './lib/whisper.js';
-import { parseActions } from './lib/botActions.js';
+import './dotenv.js';
+import { messageGenerator } from './messageListener.js';
+import { sendMessage } from './sendMessage.js';
+import { ttsRequest } from './elevenlabs.js';
+import { getChatResponse } from './getChatResponse.js';
+import { addMessage, loadConversations } from './conversations.js';
+import { audioEffects } from './audio.js';
+import { user, assistant } from './getChatResponse.js';
+import { generateAudio } from './musicgen.js';
+import { transcribeAudio } from './whisper.js';
+import { parseActions } from './botActions.js';
 
-let conversations = {};
+let conversations = loadConversations();
 
 const init = async () => {
   const generator = messageGenerator();
