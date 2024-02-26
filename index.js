@@ -8,6 +8,7 @@ import { audioEffects } from './lib/audio.js';
 import { user, assistant } from './lib/getChatResponse.js';
 import { generateAudio } from './lib/musicgen.js';
 import { transcribeAudio } from './lib/whisper.js';
+import { parseActions } from './lib/botActions.js';
 
 let conversations = {};
 
@@ -24,29 +25,33 @@ const init = async () => {
     
     try {
         const aiResponse = await getChatResponse(conversations[from]);
-        
-        try {
-          const [musicgenAudioPath, ttsAudio] = await Promise.all([
-            generateAudio(aiResponse),
-            ttsRequest(aiResponse),
-          ]);
-          // audio fx
-          const fxAudioUrl = await audioEffects(ttsAudio, musicgenAudioPath)
+        conversations = addMessage(conversations, from, assistant(aiResponse));
+        const { voiceEnabled } = parseActions(conversations[from])
 
-          conversations = addMessage(conversations, from, assistant(aiResponse));
+        if (voiceEnabled) {
 
+          try {
+            const [musicgenAudioPath, ttsAudio] = await Promise.all([
+              generateAudio(aiResponse),
+              ttsRequest(aiResponse),
+            ]);
+            // audio fx
+            const fxAudioUrl = await audioEffects(ttsAudio, musicgenAudioPath)
+
+            // send audio
+            await sendMessage(aiResponse, from, fxAudioUrl);
+          
+          } catch (e) {
+            console.error(e);
+            console.trace();
+  ;         conversations = addMessage(conversations, from, user(`Error processing your request:\n\n${e.message}.\n\nPlease diagnose it. This happened on your server. Say sorry.`));
+            // get a customized ai response for the error
+            const aiErrorResponse = await getChatResponse(conversations[from], {disableTools: true});
+            await sendMessage(aiErrorResponse, from);
+          }
+        } else {
           // send text
           await sendMessage(aiResponse, from);
-          // send audio
-          await sendMessage(aiResponse, from, fxAudioUrl);
-        
-        } catch (e) {
-          console.error(e);
-          console.trace();
-;          conversations = addMessage(conversations, from, user(`Error processing your request:\n\n${e.message}.\n\nPlease diagnose it. This happened on your server. Say sorry.`));
-          // get a customized ai response for the error
-          const aiErrorResponse = await getChatResponse(conversations[from], {disableTools: true});
-          await sendMessage(aiErrorResponse, from);
         }
     } catch (e) {
       console.error("Failed to process message:", e);
