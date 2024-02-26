@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"author": "Thomas Haferlach",
 	"scripts": {
-		"start": "watch 'node ./index.js'"
+		"start": "watch 'node ./src/index.js'"
 	},
 	"license": "MIT",
 	"dependencies": {
