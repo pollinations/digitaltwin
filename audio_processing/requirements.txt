@@ -1,0 +1,5 @@
+pedalboard
+scipy
+pydub
+librosa
+numpy
