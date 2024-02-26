@@ -3,7 +3,7 @@ const crypto = require('crypto');
 
 const PORT = process.env.LISTENER_PORT || 3000;
 const app = express();
-
+app.use(express.json())
 // Store buffers in memory with their MIME types
 const buffers = {};
 

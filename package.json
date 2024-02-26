@@ -5,11 +5,11 @@
 	"main": "index.js",
 	"author": "Thomas Haferlach",
 	"scripts": {
-		"start": "node index.js"
+		"start": "watch 'node ./index.js'"
 	},
 	"license": "MIT",
 	"dependencies": {
-
+		"await-sleep": "^0.0.1",
 		"debounce": "^2.0.0",
 		"dotenv": "^16.3.1",
 		"express": "^4.18.2",
@@ -19,6 +19,7 @@
 		"openai": "^4.28.0",
 		"picocolors": "^1.0.0",
 		"ramda": "^0.29.1",
+		"watch": "^1.0.2",
 		"whatsapp": "^0.0.5-Alpha"
 	},
 	"engines": {

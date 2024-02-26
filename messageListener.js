@@ -1,54 +1,68 @@
 const { downloadMedia } = require("./downloadMedia");
 const { app } = require('./express');
+const sleep = require('await-sleep');
 
-const handleWebhook = (req, res) => {
+const handleWebhook = async (req, res) => {
   console.log(`Received webhook with token: ${req.query['hub.verify_token']}`);
-  console.log("Request Query:", req.query);
-  console.log("Request Body:", JSON.stringify(req.body, null, 2));
   
-  if (!req.body)  return;
+  if (!req.body) return;
   
   if (req.body.object === "whatsapp_business_account" && req.body.entry) {
-    req.body.entry.forEach(entry => {
-      entry.changes.forEach(change => {
-        if (change.field === "messages") {
-          const messageData = change.value.messages?.[0];
-          if (!messageData) return;
-
-          const from = messageData.from;
-          if (messageData.type === "text") {
-            const text = messageData.text.body;
-            messageListeners.forEach(listener => listener({ from, text }));
-          } else if (messageData.type === "audio") {
-            const audioDetails = {
-              mimeType: messageData.audio.mime_type,
-              sha256: messageData.audio.sha256,
-              id: messageData.audio.id,
-              voice: messageData.audio.voice
-            };
-
-            downloadMedia(audioDetails.id).then(buffer => {
-              console.log(`Media buffer for audio message from ${from}:`, buffer);
-            });
-
-
-            console.log(`Received audio message from ${from}:`, audioDetails);
-          }
-        }
-      });
-    });
+    for (const entry of req.body.entry) {
+      for (const change of entry.changes) {
+        await handleMessage(change);
+      }
+    }
   }
 
   res.status(200).send(req.query['hub.challenge']);
 };
 
+const handleMessage = async (change) => {
+  const messageData = change.value.messages?.[0];
+  if (!messageData) return;
+
+  const from = messageData.from;
+  if (messageData.type === "text") {
+    await processTextMessage(from, messageData.text.body);
+  } else if (messageData.type === "audio") {
+    await processAudioMessage(from, messageData.audio);
+  }
+};
 
 app.post('/webhook', handleWebhook);
 app.get('/webhook', handleWebhook);
 
+const processTextMessage = async (from, text) => {
+  await Promise.all(messageListeners.map(listener => listener({ from, text })));
+};
+
+const processAudioMessage = async (from, audioDetails) => {
+  const buffer = await downloadMedia(audioDetails.id);
+  console.log(`Media buffer for audio message from ${from}:`, buffer);
+  console.log(`Received audio message from ${from}:`, audioDetails);
+  await Promise.all(messageListeners.map(listener => listener({ from, audio: buffer })));
+};
+
 let messageListeners = [];
+
 const addListener = (listener) => {
   messageListeners.push(listener);
 };
 
-exports.addListener = addListener;
+
+const messageGenerator = async function* () {
+  let messageQueue = [];
+  const pushToQueue = (message) => messageQueue.push(message);
+  addListener(pushToQueue);
+
+  while (true) {
+    if (messageQueue.length > 0) {
+      yield messageQueue.shift();
+    } else {
+      await sleep(100);
+    }
+  }
+};
+
+exports.messageGenerator = messageGenerator;
