@@ -41,9 +41,11 @@ const init = async () => {
           await sendMessage(aiResponse, from, fxAudioUrl);
         
         } catch (e) {
-          conversations = addMessage(conversations, from, user(`Error processing your request:\n\n${e.message}.\n\nPlease diagnose it. This happened on your server. Say sorry.`));
+          console.error(e);
+          console.trace();
+;          conversations = addMessage(conversations, from, user(`Error processing your request:\n\n${e.message}.\n\nPlease diagnose it. This happened on your server. Say sorry.`));
           // get a customized ai response for the error
-          const aiErrorResponse = await getChatResponse(conversations[from]);
+          const aiErrorResponse = await getChatResponse(conversations[from], {disableTools: true});
           await sendMessage(aiErrorResponse, from);
         }
     } catch (e) {
@@ -54,3 +56,4 @@ const init = async () => {
 };
 
 init();
+
