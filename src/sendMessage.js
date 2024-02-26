@@ -6,7 +6,7 @@ const wa = new WhatsApp(process.env.WA_PHONE_NUMBER_ID);
 const sendMessage = async (message, recipientNumber, mediaUrl = '') => {
   console.log(`Sending message to ${recipientNumber}: ${message} with media URL: ${mediaUrl}`);
   const sentMessage = mediaUrl
-    ? wa.messages.audio({ link: mediaUrl, caption: message }, recipientNumber)
+    ? wa.messages.audio({ link: mediaUrl}, recipientNumber)
     : wa.messages.text({ body: message }, recipientNumber);
 
   try {

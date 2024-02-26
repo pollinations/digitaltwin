@@ -110,8 +110,8 @@ const generateAudio = async prompt => {
         outputUrl = statusJson.output[0];
         break;
       }
-      // Poll every 5 seconds
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Poll every 1 seconds
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     if (outputUrl) {

@@ -9,6 +9,7 @@ import { user, assistant } from './getChatResponse.js';
 import { generateAudio } from './musicgen.js';
 import { transcribeAudio } from './whisper.js';
 import { parseActions } from './botActions.js';
+import { withTimeout } from './utils/withTimeout.js';
 
 let conversations = loadConversations();
 
@@ -31,15 +32,20 @@ const init = async () => {
         if (voiceEnabled) {
 
           try {
-            const [musicgenAudioPath, ttsAudio] = await Promise.all([
-              generateAudio(aiResponse),
-              ttsRequest(aiResponse),
+            console.log("started voice and music generation promises")
+            const [ttsAudio, musicgenAudioPath] = await Promise.all([
+              withTimeout(ttsRequest(aiResponse)),
+              withTimeout(generateAudio(aiResponse)),
             ]);
+            console.log("ended voice and music generation promises", ttsAudio, musicgenAudioPath)
             // audio fx
-            const fxAudioUrl = await audioEffects(ttsAudio, musicgenAudioPath)
+            const fxAudioUrl = ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
 
+            console.log("Sending audio message with effects", fxAudioUrl);
             // send audio
             await sendMessage(aiResponse, from, fxAudioUrl);
+
+            console.log("Message sent to whatsapp");
           
           } catch (e) {
             console.error(e);
@@ -61,4 +67,3 @@ const init = async () => {
 };
 
 init();
-
