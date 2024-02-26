@@ -1,15 +1,10 @@
-const dotenv = require('dotenv');
-dotenv.config();
-dotenv.config({ path: "config.env" });
-const fs = require('fs').promises;
-const path = require('path');
-const { messageGenerator } = require('./messageListener');
-const { sendMessage } = require('./send_message');
-const { last } = require('ramda');
-const { ttsRequest } = require('./elevenlabs');
-const { addBufferToServer } = require('./express');
-const { getChatResponse } = require('./getChatResponse');
-const { addMessage } = require('./conversations');
+import './lib/dotenv.js';
+import { messageGenerator } from './lib/messageListener.js';
+import { sendMessage } from './lib/send_message.js';
+import { ttsRequest } from './lib/elevenlabs.js';
+import { addBufferToServer } from './lib/express.js';
+import { getChatResponse } from './lib/getChatResponse.js';
+import { addMessage } from './lib/conversations.js';
 
 let conversations = {};
 
@@ -24,15 +19,16 @@ const init = async () => {
       role: "user"
     });
     
-    const history = conversations[from];
-    const aiResponse = await getChatResponse(history);
+    const aiResponse = await getChatResponse(conversations[from]);
 
     conversations = addMessage(conversations, from, {
       content: aiResponse,
       role: "assistant"
     });
     
+    // send text
     await sendMessage(aiResponse, from);
+    
     // tts
     const { buffer, mime } = await ttsRequest(aiResponse);
 
@@ -40,7 +36,6 @@ const init = async () => {
     const url = await addBufferToServer(buffer, mime);
 
     // send
-    console.log("serving audio buffer at url", url);
     await sendMessage(aiResponse, from, url);
   }
 
