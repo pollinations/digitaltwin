@@ -1,6 +1,6 @@
 import './lib/dotenv.js';
 import { messageGenerator } from './lib/messageListener.js';
-import { sendMessage } from './lib/send_message.js';
+import { sendMessage } from './lib/sendMessage.js';
 import { ttsRequest } from './lib/elevenlabs.js';
 import { getChatResponse } from './lib/getChatResponse.js';
 import { addMessage } from './lib/conversations.js';
