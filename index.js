@@ -16,23 +16,34 @@ const init = async () => {
     
     conversations = addMessage(conversations, from, user(text));
     
-    const aiResponse = await getChatResponse(conversations[from]);
-    
-    // tts
-    const ttsAudio = await ttsRequest(aiResponse);
+    try {
+        const aiResponse = await getChatResponse(conversations[from]);
+        
+        try {
+        // tts
+        const ttsAudio = await ttsRequest(aiResponse);
 
-    // audio fx
-    const fxAudioUrl = await audioEffects(ttsAudio, null)
+        // audio fx
+        const fxAudioUrl = await audioEffects(ttsAudio, null)
 
-    console.log("got audio url", fxAudioUrl)
-    conversations = addMessage(conversations, from, assistant(aiResponse));
-    
-    // send text
-    await sendMessage(aiResponse, from);
-    // send audio
-    await sendMessage(aiResponse, from, fxAudioUrl);
+        conversations = addMessage(conversations, from, assistant(aiResponse));
+
+        // send text
+        await sendMessage(aiResponse, from);
+        // send audio
+        await sendMessage(aiResponse, from, fxAudioUrl);
+      
+      } catch (e) {
+        conversations = addMessage(conversations, from, user(`Error processing your request:\n\n${e.message}.\n\nPlease diagnose it. This happened on your server. Say sorry.`));
+        // get a customized ai response for the error
+        const aiErrorResponse = await getChatResponse(conversations[from]);
+        await sendMessage(aiErrorResponse, from);
+      }
+    } catch (e) {
+      console.error("Failed to process message:", e);
+      await sendMessage(`Sorry, I encountered an error processing your request. Error: ${e.message}`, from);
+    }
   }
-
 };
 
 const assistant = text => ({
