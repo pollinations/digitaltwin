@@ -1,10 +1,10 @@
 
-const initialState = { voiceEnabled: false };
+const initialState = { voiceEnabled: true };
 
 export const parseActions = history => {
   return history.reduce((state, { content }) => {
-    const disableIndex = content.lastIndexOf("DISABLE_VOICE");
-    const enableIndex = content.lastIndexOf("ENABLE_VOICE");
+    const disableIndex = content.lastIndexOf("DESATIVAR_VOZ");
+    const enableIndex = content.lastIndexOf("ATIVAR_VOZ");
 
     if (disableIndex > enableIndex) {
       return { ...state, voiceEnabled: false };

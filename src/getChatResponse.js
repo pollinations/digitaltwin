@@ -35,6 +35,6 @@ export { getChatResponse };export const assistant = text => ({
   });
 
 function fixWrongQuestionFormat(response) {
-  return response.split('\n').length > 1 && response.split('\n')[0].includes('?') ? response.split('\n')[0] : response;
+  return response;//response.split('\n').length > 1 && response.split('\n')[0].includes('?') ? response.split('\n')[0] : response;
 }
 
