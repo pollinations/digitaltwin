@@ -1,4 +1,5 @@
 messageStore/
+.env*
 
 # Logs
 logs
