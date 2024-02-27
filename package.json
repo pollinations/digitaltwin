@@ -21,6 +21,7 @@
 		"openai": "^4.28.0",
 		"picocolors": "^1.0.0",
 		"ramda": "^0.29.1",
+		"seedrandom": "^3.0.5",
 		"watch": "^1.0.2",
 		"whatsapp": "^0.0.5-Alpha"
 	},

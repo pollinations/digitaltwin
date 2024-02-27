@@ -1,26 +1,28 @@
 import OpenAI from "openai";
+import { SYSTEM_PROMPT } from "./persona.js";
 
 const openai = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY'],
 });
 
-const getChatResponse = async (history) => {
+const getChatResponse = async (history, userId) => {
   const simplifiedHistory = history.map(({ role, content }) => ({ role, content }));
   const historyWithSystemPrompt = [
     {
       role: "system",
-      content: process.env.SYSTEM_PROMPT
+      content: SYSTEM_PROMPT({seed: userId})
     },
     ...simplifiedHistory]
   const chatCompletion = await openai.chat.completions.create({
     messages: historyWithSystemPrompt,
-    model: process.env.OPENAI_GPT_MODEL || 'gpt-3.5-turbo',
+    model: process.env.OPENAI_GPT_MODEL || 'gpt-4',
   });
 
 
-  const response = chatCompletion.choices[0].message.content;
+  let response = chatCompletion.choices[0].message.content;
   console.log("got ai response", response);
-  return response;
+  const sanitizedResponse = fixWrongQuestionFormat(response);
+  return sanitizedResponse;
 };
 
 export { getChatResponse };export const assistant = text => ({
@@ -31,4 +33,8 @@ export { getChatResponse };export const assistant = text => ({
     content: text,
     role: "user"
   });
+
+function fixWrongQuestionFormat(response) {
+  return response.split('\n').length > 1 && response.split('\n')[0].includes('?') ? response.split('\n')[0] : response;
+}
 

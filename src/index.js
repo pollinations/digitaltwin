@@ -25,7 +25,7 @@ const init = async () => {
     conversations = addMessage(conversations, from, user(text));
     
     try {
-        const aiResponse = await getChatResponse(conversations[from]);
+        const aiResponse = await getChatResponse(conversations[from], from);
         conversations = addMessage(conversations, from, assistant(aiResponse));
         const { voiceEnabled } = parseActions(conversations[from])
 
@@ -52,7 +52,7 @@ const init = async () => {
             console.trace();
   ;         conversations = addMessage(conversations, from, user(`Error processing your request:\n\n${e.message}.\n\nPlease diagnose it. This happened on your server. Say sorry.`));
             // get a customized ai response for the error
-            const aiErrorResponse = await getChatResponse(conversations[from], {disableTools: true});
+            const aiErrorResponse = await getChatResponse(conversations[from], from);
             await sendMessage(aiErrorResponse, from);
           }
         } else {
