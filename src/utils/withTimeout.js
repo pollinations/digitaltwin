@@ -9,7 +9,7 @@ export const withTimeout = (promise) => {
       console.log("20s TIMEOUT REACHED");
     }
     resolve(null);
-  }, 15000));
+  }, 30000));
 
   return Promise.race([promise, timeout]);
 };

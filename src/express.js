@@ -10,7 +10,7 @@ app.use(express.json());
 const buffers = {};
 
 // Function to add a buffer to the server
-export const addBufferToServer = (buffer, mimeType) => {
+export const addBufferToServer = ({buffer, mimeType}) => {
   if (!buffer || !mimeType) {
     throw new Error('Buffer and mimeType are required');
   }

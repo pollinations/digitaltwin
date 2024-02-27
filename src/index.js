@@ -10,6 +10,7 @@ import { generateAudio } from './musicgen.js';
 import { transcribeAudio } from './whisper.js';
 import { parseActions } from './botActions.js';
 import { withTimeout } from './utils/withTimeout.js';
+import { addBufferToServer } from './express.js';
 
 let conversations = loadConversations();
 
@@ -35,11 +36,11 @@ const init = async () => {
             console.log("started voice and music generation promises")
             const [ttsAudio, musicgenAudioPath] = await Promise.all([
               withTimeout(ttsRequest(aiResponse)),
-              withTimeout(generateAudio(aiResponse)),
+              null// withTimeout(generateAudio(aiResponse)),
             ]);
             console.log("ended voice and music generation promises", ttsAudio, musicgenAudioPath)
             // audio fx
-            const fxAudioUrl = ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
+            const fxAudioUrl = ttsAudio ? await addBufferToServer(ttsAudio) : null; // ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
 
             console.log("Sending audio message with effects", fxAudioUrl);
             // send audio
@@ -50,7 +51,7 @@ const init = async () => {
           } catch (e) {
             console.error(e);
             console.trace();
-  ;         conversations = addMessage(conversations, from, user(`Error processing your request:\n\n${e.message}.\n\nPlease diagnose it. This happened on your server. Say sorry.`));
+            conversations = addMessage(conversations, from, user(`Error processing your request:\n\n${e.message}.\n\nPlease diagnose it. This happened on your server. Say sorry.`));
             // get a customized ai response for the error
             const aiErrorResponse = await getChatResponse(conversations[from], from);
             await sendMessage(aiErrorResponse, from);

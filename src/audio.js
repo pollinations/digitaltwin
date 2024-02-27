@@ -26,7 +26,7 @@ export const audioEffects = async ({buffer}, backgroundFilePath) => {
     fs.unlinkSync(tempFilePath);
     fs.unlinkSync(outputPath);
 
-    const url = addBufferToServer(outputBuffer, "audio/mpeg");
+    const url = addBufferToServer({buffer:outputBuffer, mimeType: "audio/mpeg"});
     
     return url;
 
