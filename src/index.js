@@ -40,7 +40,7 @@ const init = async () => {
             ]);
             console.log("ended voice and music generation promises", ttsAudio, musicgenAudioPath)
             // audio fx
-            const fxAudioUrl = ttsAudio ? await addBufferToServer(ttsAudio) : null; // ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
+            const fxAudioUrl = ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
 
             console.log("Sending audio message with effects", fxAudioUrl);
             // send audio

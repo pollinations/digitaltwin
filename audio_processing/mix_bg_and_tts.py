@@ -132,6 +132,9 @@ if __name__ == "__main__":
     background_audio_path = None
     if len(sys.argv) == 3:
         background_audio_path = sys.argv[2]
+
+    if background_audio_path == "null":
+        background_audio_path = None
     
     mixed_audio_path = process_and_mix_audio(tts_audio_path, background_audio_path)
     print(mixed_audio_path)

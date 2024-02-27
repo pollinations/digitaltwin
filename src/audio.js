@@ -15,8 +15,9 @@ export const audioEffects = async ({buffer}, backgroundFilePath) => {
     const tempFilePath = path.join(os.tmpdir(), `temp_audio_${Date.now()}.mp3`);
     await writeFileAsync(tempFilePath, buffer);
 
+    const backgroundArg =  backgroundFilePath ? ` "${backgroundFilePath}"` : "";
     // Execute the Python script using the temporary file path
-    const { stdout } = await execAsync(`python audio_processing/mix_bg_and_tts.py "${tempFilePath}" "${backgroundFilePath}"`);
+    const { stdout } = await execAsync(`python audio_processing/mix_bg_and_tts.py "${tempFilePath}"`+backgroundArg);
     const outputPath = stdout.trim(); // The Python script outputs the path of the processed file
 
     // Read the processed audio file into a buffer
