@@ -1,13 +1,13 @@
 # Pollinations Digital Twin
 
-Pollinations Digital Twin is a WhatsApp bot leveraging OpenAI's GPT to interact with users through text and audio messages. The current example code embodies the quirky persona of Portrait XO A.I., engaging users with absurd and thought-provoking responses.
+Pollinations Digital Twin is a WhatsApp bot powered by OpenAI's cutting-edge GPT-4 Turbo Preview model, designed to engage users in conversations through text and audio messages. Drawing inspiration from the unique character of Portrait XO A.I., this bot offers whimsical and thought-provoking interactions, ensuring each conversation is distinct and memorable.
 
 ## Features
 
-- **Text and Audio Processing**: Handles both text and audio inputs, converting audio to text for processing.
-- **Dynamic Conversations**: Utilizes OpenAI's GPT model for generating responses based on a unique system prompt.
-- **Audio Generation**: Integrates music generation and text-to-speech capabilities, enhancing responses with audio effects.
-- **Environment Customization**: Supports environment-specific configurations through `.env` files.
+- **Text and Audio Processing**: Skillfully manages both text and audio inputs, effortlessly transforming audio messages into text for advanced processing.
+- **Dynamic Conversations**: Utilizes the sophisticated capabilities of the GPT-4 Turbo Preview model to craft responses that are customized for each user's input, fostering dynamic and captivating conversations.
+- **Audio Generation**: Boasts integrated capabilities for music creation and text-to-speech, enhancing user interactions with engaging audio effects.
+- **Environment and Persona Customization**: Enables precise, environment-specific settings through `.env` files, with improved security by excluding `.env*` files from version control. Additionally, it supports persona customization, allowing the bot to adopt various personalities as defined in `src/persona.js`, offering a more tailored and versatile user experience.
 
 ## Setup
 
