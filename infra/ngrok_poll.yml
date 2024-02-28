@@ -1,0 +1,7 @@
+version: 2
+tunnels:
+  app:
+    addr: 3211
+    inspect: false
+    proto: http
+    domain: collie-beloved-friendly.ngrok-free.app

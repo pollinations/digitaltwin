@@ -1,5 +1,6 @@
 messageStore/
 .env*
+infra/*authtoken.yml
 
 # Logs
 logs

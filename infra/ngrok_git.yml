@@ -1,0 +1,6 @@
+version: 2
+tunnels:
+  app:
+    addr: 3210
+    proto: http
+    domain: pipefish-artistic-stag.ngrok-free.app
