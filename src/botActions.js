@@ -1,13 +1,16 @@
-const initialState = { voiceEnabled: true };
+import { ACTION_INITIAL_STATE, DISABLE_VOCIE, ENABLE_VOICE } from "./persona.js";
+
+const initialState = ACTION_INITIAL_STATE;
 
 export const parseActions = history => {
   console.log("Parsing actions from history...");
   return history.reduce((state, { content }) => {
-    let disableIndex = content.lastIndexOf("DESATIVAR_VOZ");
-    let enableIndex = content.lastIndexOf("ATIVAR_VOZ");
+    let disableIndex = content.lastIndexOf(DISABLE_VOCIE);
+    let enableIndex = content.lastIndexOf(ENABLE_VOICE);
 
     // if enable index is 3 ahead of disableIndexit found ATIVAR_VOZ as a substring
     // set the enableIndex to 0
+    // this is a hack for pat papo. can be done nicer.
     if (enableIndex - disableIndex === 3)
       enableIndex = -1;
 

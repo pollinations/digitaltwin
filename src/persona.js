@@ -46,3 +46,5 @@ Instructions:
 export const ENABLE_VOICE = "ENABLE_VOICE";
 
 export const DISABLE_VOCIE = "DISABLE_VOICE";
+
+export const ACTION_INITIAL_STATE  = { voiceEnabled: false };
