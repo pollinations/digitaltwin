@@ -13,6 +13,8 @@ const getChatResponse = async (history, userId) => {
       content: SYSTEM_PROMPT({seed: userId})
     },
     ...simplifiedHistory]
+  
+    console.log("calling chatgpt with history", historyWithSystemPrompt)
   const chatCompletion = await openai.chat.completions.create({
     messages: historyWithSystemPrompt,
     model: process.env.OPENAI_GPT_MODEL || 'gpt-4',

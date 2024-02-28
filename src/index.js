@@ -19,10 +19,10 @@ const init = async () => {
 
   for await (let { from, text, audio } of generator) {
     console.log("Message received", "text",text, "audio", audio ? true : false, "from", from);
-    
+
     if (audio) 
       text = await transcribeAudio(audio);
-
+    
     conversations = addMessage(conversations, from, user(text));
     
     try {
@@ -36,7 +36,7 @@ const init = async () => {
             console.log("started voice and music generation promises")
             const [ttsAudio, musicgenAudioPath] = await Promise.all([
               withTimeout(ttsRequest(aiResponse)),
-              null// withTimeout(generateAudio(aiResponse)),
+              withTimeout(generateAudio(aiResponse)),
             ]);
             console.log("ended voice and music generation promises", ttsAudio, musicgenAudioPath)
             // audio fx
