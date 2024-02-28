@@ -1,9 +1,3 @@
-import { randomRiddle } from "./riddles.js";
-
-
-
-
-import { randomRiddle } from "./riddles.js";
 
 export const SYSTEM_PROMPT = ({seed}) => {
 
