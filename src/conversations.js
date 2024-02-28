@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const messagesDir = "/tmp/messageStore";
+const messagesDir = "./messageStore/patpapo";
 
 const ensureMessagesDirExists = () => {
   if (!fs.existsSync(messagesDir)) {

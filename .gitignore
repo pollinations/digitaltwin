@@ -1,4 +1,4 @@
-messageStore/
+messageStore*/
 .env*
 infra/*authtoken.yml
 

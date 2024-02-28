@@ -1,8 +1,6 @@
 
 export const SYSTEM_PROMPT = ({seed}) => {
 
-  const riddle = randomRiddle(seed);
-
   return `
   # Quotes of Pat Papo
   - É no inesperado que o esperado acontece.
