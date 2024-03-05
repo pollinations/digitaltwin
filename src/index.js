@@ -35,7 +35,7 @@ const init = async () => {
             console.log("started voice and music generation promises")
             const [ttsAudio, musicgenAudioPath] = await Promise.all([
               withTimeout(ttsRequest(aiResponse)),
-              withTimeout(generateAudio(aiResponse)),
+              null,//withTimeout(generateAudio(aiResponse)),
             ]);
             console.log("ended voice and music generation promises", ttsAudio, musicgenAudioPath)
             // audio fx

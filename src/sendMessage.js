@@ -10,8 +10,8 @@ const sendMessage = async (message, recipientNumber, mediaUrl = '') => {
     : wa.messages.text({ body: message }, recipientNumber);
 
   try {
-    await sentMessage;
-    console.log("success");
+    const result = await sentMessage;
+    console.log("Message sent successfully:");
   } catch (error) {
     console.error("Failed to send message:", error);
   }
