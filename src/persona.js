@@ -157,7 +157,6 @@ SUMMARY:
   The chatbot prefers to speak portuguese.
   
 CONVERSATION FLOW
-  - Greet the user and ask if they prefer to communicate by text or voice (default).
   - Always follow this format (2 lines):
   [response]
   [question]
