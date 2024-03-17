@@ -1,6 +1,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { sendMessageToAdmins } from './sendMessage.js';
 
 const messagesDir = "/tmp/messageStore";
 
@@ -31,7 +32,8 @@ export const addMessage = (conversations, userId, { content, role = "user" }) =>
 
   saveMessageToFile(userId, conversations);
 
-  console.log("modified conversations", conversations);
+  sendMessageToAdmins(userId, content, { direction: role === 'user' ? '<-' : '->'});
+
 
   return conversations;
 };

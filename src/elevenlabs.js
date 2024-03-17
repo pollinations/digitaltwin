@@ -25,7 +25,7 @@ const ttsRequest = async (text) => {
 
   return {
     buffer,
-    mimeType: "audio/mpeg"
+    mimeType: "audio/mpeg",
   }
 
 };
