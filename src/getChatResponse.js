@@ -6,7 +6,7 @@ const openai = new OpenAI({
 });
 
 const getChatResponse = async (history, userId) => {
-  const simplifiedHistory = history.map(({ role, content }) => ({ role, content }));
+  const simplifiedHistory = history.slice(-40).map(({ role, content }) => ({ role, content }));
   const historyWithSystemPrompt = [
     {
       role: "system",
@@ -14,12 +14,12 @@ const getChatResponse = async (history, userId) => {
     },
     ...simplifiedHistory]
   
-    console.log("calling chatgpt with history", historyWithSystemPrompt)
+    console.log("calling chatgpt with history (last 3 shown)", historyWithSystemPrompt.slice(-3))
   const chatCompletion = await openai.chat.completions.create({
     messages: historyWithSystemPrompt,
     model: process.env.OPENAI_GPT_MODEL || 'gpt-4',
   });
-
+ 
 
   let response = chatCompletion.choices[0].message.content;
   console.log("got ai response", response);

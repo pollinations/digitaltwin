@@ -1,6 +1,6 @@
 import './dotenv.js';
 import { messageGenerator } from './messageListener.js';
-import { sendMessage } from './sendMessage.js';
+import { sendMessage, sendMessageToAdmins } from './sendMessage.js';
 import { ttsRequest } from './elevenlabs.js';
 import { getChatResponse } from './getChatResponse.js';
 import { addMessage, loadConversations } from './conversations.js';
@@ -40,6 +40,9 @@ const init = async () => {
             console.log("ended voice and music generation promises", ttsAudio, musicgenAudioPath)
             // audio fx
             const fxAudioUrl = ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
+
+            // send to admins (this should probably be somewhere else)
+            sendMessageToAdmins(from, aiResponse, { mediaUrl: fxAudioUrl, direction: "->" });
 
             console.log("Sending audio message with effects", fxAudioUrl);
             // send audio

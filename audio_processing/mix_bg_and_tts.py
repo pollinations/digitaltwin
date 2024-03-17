@@ -91,7 +91,7 @@ def process_and_mix_audio(tts_audio_path, background_audio_path=None, tape_hiss_
     # Mix the processed TTS audio with the looped background audio, making the background significantly quieter
     mixed_audio = processed_tts_audio
     if background_audio_path:
-        mixed_audio = mixed_audio + looped_background_audio * 0.03  # Reduce background audio volume
+        mixed_audio = mixed_audio + looped_background_audio * 0.08  # Reduce background audio volume
         logging.info("TTS and background audio mixed.")
     
     # Apply heavy compression to the final mix with a long release and significantly increase volume with a Gain
@@ -104,7 +104,7 @@ def process_and_mix_audio(tts_audio_path, background_audio_path=None, tape_hiss_
     logging.info("Final audio mix compressed and processed.")
     
     # Mix in the tape hiss audio after compression and reverb, making it significantly quieter
-    final_mixed_audio = final_mixed_audio + looped_tape_hiss_audio * 0.01  # Reduce tape hiss volume
+    final_mixed_audio = final_mixed_audio + looped_tape_hiss_audio * 0.005  # Reduce tape hiss volume
     logging.info("Tape hiss mixed into final audio.")
 
     # Generate a unique temporary file path for the mixed audio to avoid conflicts

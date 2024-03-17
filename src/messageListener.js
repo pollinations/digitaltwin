@@ -41,6 +41,7 @@ app.post('/webhook', handleWebhook);
 app.get('/webhook', handleWebhook);
 
 const processTextMessage = async (from, text) => {
+  console.log("processing message from", from);
   await Promise.all(messageListeners.map(listener => listener({ from, text })));
 };
 
@@ -54,10 +55,9 @@ const processAudioMessage = async (from, audioDetails) => {
 let messageListeners = [];
 
 const addListener = (listener) => {
-  console.log("added listener")
+  console.log("added listener");
   messageListeners.push(listener);
 };
-
 
 const messageGenerator = async function* () {
   let messageQueue = [];
