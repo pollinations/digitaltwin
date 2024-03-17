@@ -46,6 +46,7 @@ const generateAudio = async prompt => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(localData)
     });
+    console.log("localResponse", localResponse.ok);
     if (localResponse.ok) {
       const jsonResponse = await localResponse.json();
       if (jsonResponse.output) {
@@ -81,7 +82,7 @@ const generateAudio = async prompt => {
     "input": {
       "prompt": sanitizedPrompt,
       "variations": 1,
-      "model": Math.random() < 0.5 ? "facebook/audio-magnet-medium" : "facebook/magnet-medium-10secs"
+      "model": Math.random() < 0.0 ? "facebook/audio-magnet-medium" : "facebook/magnet-medium-10secs"
     }
   };
 

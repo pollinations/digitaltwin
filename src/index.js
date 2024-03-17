@@ -23,7 +23,6 @@ const init = async () => {
       text = await transcribeAudio(audio);
     
     conversations = addMessage(conversations, from, user(text));
-    sendMessageToAdmins(from, text, { direction: "-<" })
     
     try {
         const aiResponse = await getChatResponse(conversations[from], from);
