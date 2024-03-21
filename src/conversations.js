@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { sendMessageToAdmins } from './sendMessage.js';
+import { sendMessageToAdmins, sendTextMessage } from './sendMessage.js';
 
 const messagesDir = "/tmp/messageStore";
 

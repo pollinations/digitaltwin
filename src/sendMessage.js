@@ -9,7 +9,7 @@ console.log("initializing whatsapp with", process.env.WA_PHONE_NUMBER_ID);
 const wa = new WhatsApp(process.env.WA_PHONE_NUMBER_ID);
 
 // Function to send a text message to a specific number
-const sendTextMessage = async (number, msg) => {
+export const sendTextMessage = async (number, msg) => {
   
   console.log(`Sending text message to ${number}: ${msg}`);
   await wa.messages.text({ body: msg }, number);

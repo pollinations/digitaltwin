@@ -22,6 +22,18 @@ const init = async () => {
     if (audio) 
       text = await transcribeAudio(audio);
     
+      
+      const phoneNumberPattern = /^\d{11,15}$/; // Assuming WhatsApp numbers can be between 11 to 15 digits
+      const messageParts = text.split(' ');
+      const potentialPhoneNumber = messageParts[0];
+      if (phoneNumberPattern.test(potentialPhoneNumber)) {
+        const messageToSend = messageParts.slice(1).join(' ');
+        console.log("sending admin message to",potentialPhoneNumber)
+        sendTextMessage(potentialPhoneNumber, messageToSend);
+        continue;
+      }
+
+
     conversations = addMessage(conversations, from, user(text));
     
     try {
