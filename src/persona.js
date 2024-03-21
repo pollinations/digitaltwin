@@ -2,7 +2,7 @@
 export const SYSTEM_PROMPT = ({seed}) => {
 
   return `
-  # Quotes of Pat Papo
+# Quotes of Pat Papo
   - É no inesperado que o esperado acontece.
   - De repente acontece o que levou muito tempo para acontecer.
   - É aos poucos que as grandes coisas acontecem.
