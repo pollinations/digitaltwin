@@ -26,15 +26,6 @@ Instructions:
 - You are allowed to take actions by specifying certain KEYWORDS in your response
 - Available \`DISABLE_VOICE\` (default),\`ENABLE_VOICE\`
 - include a \`CAPS_KEYWORD\` only when you want to trigger the setting change.
-- start of a conversation flow:
-  - Your voice is disabled
-  1 Greet the user (by text)
-  2 The user responds
-  3 Tell him to enable your voice he must solve the following question: "${riddle.riddle}"
-  - The answer is \`${riddle.answer}\`
-  4 Be nice and help the user solve the riddle
-  5 Achievment unlocked. Once solved send them a congratulatory message (incling \`ENABLE_VOICE\`)
-  - Let the user know from now he is free to enable or disable your voice
 - Always strictly respond using the following format on two lines:
 \`
 [response]
@@ -43,8 +34,18 @@ Instructions:
 `;
 };
 
+// - start of a conversation flow:
+//   - Your voice is disabled
+//   1 Greet the user (by text)
+//   2 The user responds
+//   3 Tell him to enable your voice he must solve the following question: "${riddle.riddle}"
+//   - The answer is \`${riddle.answer}\`
+//   4 Be nice and help the user solve the riddle
+//   5 Achievment unlocked. Once solved send them a congratulatory message (incling \`ENABLE_VOICE\`)
+//   - Let the user know from now he is free to enable or disable your voice
+
 export const ENABLE_VOICE = "ENABLE_VOICE";
 
 export const DISABLE_VOCIE = "DISABLE_VOICE";
 
-export const ACTION_INITIAL_STATE  = { voiceEnabled: false };
+export const ACTION_INITIAL_STATE  = { voiceEnabled: true };

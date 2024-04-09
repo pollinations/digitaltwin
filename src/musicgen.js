@@ -30,7 +30,7 @@ const ensureDirectoryExists = dirPath => {
  */
 const generateAudio = async prompt => {
   const sanitizedPrompt = sanitizePrompt(prompt);
-  const localUrl = `http://150.136.112.172:6688/predictions`;
+  const localUrl = `http://localhost:6688/predictions`;
 
   const localData = {
     "input": {
@@ -49,6 +49,7 @@ const generateAudio = async prompt => {
     console.log("localResponse", localResponse.ok);
     if (localResponse.ok) {
       const jsonResponse = await localResponse.json();
+      console.log("got local music json", jsonResponse)
       if (jsonResponse.output) {
         const audioBase64 = jsonResponse.output[0].split(',')[1];
         const buffer = Buffer.from(audioBase64, 'base64');
