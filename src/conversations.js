@@ -1,7 +1,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import { sendMessageToAdmins } from './sendMessage.js';
 
 const messagesDir = "./messageStore/patpapo";
 
@@ -31,9 +30,6 @@ export const addMessage = (conversations, userId, { content, role = "user" }) =>
   };
 
   saveMessageToFile(userId, conversations);
-
-  sendMessageToAdmins(userId, content, { direction: role === 'user' ? '<-' : '->'});
-
 
   return conversations;
 };

@@ -4,4 +4,5 @@ tunnels:
     addr: 3211
     inspect: false
     proto: http
-    domain: collie-beloved-friendly.ngrok-free.app
+    domain: pipefish-artistic-stag.ngrok-free.app
+ 

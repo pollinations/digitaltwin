@@ -10,16 +10,16 @@ const getChatResponse = async (history, userId) => {
   const historyWithSystemPrompt = [
     {
       role: "system",
-      content: SYSTEM_PROMPT({seed: userId})
+      content: SYSTEM_PROMPT({ seed: userId })
     },
     ...simplifiedHistory]
-  
-    console.log("calling chatgpt with history (last 3 shown)", historyWithSystemPrompt.slice(-3))
+
+  console.log("calling chatgpt with history (last 3 shown)", historyWithSystemPrompt.slice(-3))
   const chatCompletion = await openai.chat.completions.create({
     messages: historyWithSystemPrompt,
-    model: process.env.OPENAI_GPT_MODEL || 'gpt-4',
+    model: process.env.OPENAI_GPT_MODEL || 'gpt-4o',
   });
- 
+
 
   let response = chatCompletion.choices[0].message.content;
   console.log("got ai response", response);
@@ -27,14 +27,14 @@ const getChatResponse = async (history, userId) => {
   return sanitizedResponse;
 };
 
-export { getChatResponse };export const assistant = text => ({
-    content: text,
-    role: "assistant"
-  });
-  export const user = text => ({
-    content: text,
-    role: "user"
-  });
+export { getChatResponse }; export const assistant = text => ({
+  content: text,
+  role: "assistant"
+});
+export const user = text => ({
+  content: text,
+  role: "user"
+});
 
 function fixWrongQuestionFormat(response) {
   return response;//response.split('\n').length > 1 && response.split('\n')[0].includes('?') ? response.split('\n')[0] : response;
