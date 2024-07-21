@@ -1,37 +1,35 @@
 import fetch from 'node-fetch';
 
-const getMediaURL = async (mediaID, phoneNumberId = process.env.WA_PHONE_NUMBER_ID, accessToken = process.env.CLOUD_API_ACCESS_TOKEN) => {
-  const url = `https://graph.facebook.com/v16.0/${mediaID}?access_token=${accessToken}&phone_number_id=${phoneNumberId}`;
-  try {
-    const response = await fetch(url, { method: 'GET' });
-    const data = await response.json();
-    console.log("media url data", data);
-    return data.url;
-  } catch (error) {
-    console.error('Error fetching media URL:', error);
+/**
+ * Downloads media from a given URL using HTTP Basic Authentication.
+ * @param {string} mediaURL - The URL of the media to download.
+ * @param {string} accountSid - The Twilio Account SID for authentication.
+ * @param {string} authToken - The Twilio Auth Token for authentication.
+ * @returns {Buffer|null} - The media buffer if successful, otherwise null.
+ */
+export const downloadMedia = async (mediaURL, accountSid = process.env.TWILIO_SID, authToken = process.env.TWILIO_AUTH_TOKEN) => {
+  if (!mediaURL) {
+    console.error('Media URL is required');
     return null;
   }
-};
 
-export const downloadMedia = async (mediaID, accessToken = process.env.CLOUD_API_ACCESS_TOKEN, phoneNumberId = process.env.WA_PHONE_NUMBER_ID) => {
-  const mediaURL = await getMediaURL(mediaID, phoneNumberId, accessToken);
-  if (!mediaURL) {
-    console.error('Failed to get media URL');
-    return;
-  }
-
-  console.log("got media url", mediaURL);
+  console.log("Downloading media from URL:", mediaURL);
   try {
     const response = await fetch(mediaURL, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`
+        'Authorization': `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString('base64')}`
       }
     });
+    if (response.status === 401) {
+      console.error('Unauthorized access. Please check your Twilio Account SID and Auth Token.');
+      return null;
+    }
     if (!response.ok) throw new Error(`Failed to fetch media: ${response.statusText}`);
     const buffer = await response.buffer();
-    console.log(`Media buffer for ${mediaID}:`, buffer);
+    console.log(`Media buffer from ${mediaURL}:`, buffer);
     return buffer;
   } catch (error) {
     console.error('Error downloading media:', error);
+    return null;
   }
 };

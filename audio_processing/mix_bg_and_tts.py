@@ -91,14 +91,14 @@ def process_and_mix_audio(tts_audio_path, background_audio_path=None, tape_hiss_
     # Mix the processed TTS audio with the looped background audio, making the background significantly quieter
     mixed_audio = processed_tts_audio
     if background_audio_path:
-        mixed_audio = mixed_audio + looped_background_audio * 0.05  # Reduce background audio volume
+        mixed_audio = mixed_audio + looped_background_audio * 0.001  # Reduce background audio volume
         logging.info("TTS and background audio mixed.")
     
     # Apply heavy compression to the final mix with a long release and significantly increase volume with a Gain
     final_mix_board = Pedalboard([
         Compressor(threshold_db=-30, ratio=8, release_ms=2000),
         Gain(gain_db=20),  # Significantly increase volume with a Gain
-        Reverb(room_size=0.3,wet_level=0.15,width=0.2)  # Add reverb to make them sound like they are in the same space
+        Reverb(room_size=0.3,wet_level=0.001,width=0.2)  # Add reverb to make them sound like they are in the same space
     ])
     final_mixed_audio = final_mix_board(mixed_audio, tts_samplerate)
     logging.info("Final audio mix compressed and processed.")

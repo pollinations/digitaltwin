@@ -6,11 +6,13 @@ const PORT = process.env.LISTENER_PORT || 3000;
 export const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Allow handling application/x-www-form-urlencoded requests
+
 // Store buffers in memory with their MIME types
 const buffers = {};
 
 // Function to add a buffer to the server
-export const addBufferToServer = ({buffer, mimeType}) => {
+export const addBufferToServer = ({ buffer, mimeType }) => {
   if (!buffer || !mimeType) {
     throw new Error('Buffer and mimeType are required');
   }

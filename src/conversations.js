@@ -1,9 +1,8 @@
 
 import fs from 'fs';
 import path from 'path';
-import { sendMessageToAdmins, sendTextMessage } from './sendMessage.js';
 
-const messagesDir = "/tmp/messageStore";
+const messagesDir = "./messageStore/patpapo";
 
 const ensureMessagesDirExists = () => {
   if (!fs.existsSync(messagesDir)) {
@@ -31,9 +30,6 @@ export const addMessage = (conversations, userId, { content, role = "user" }) =>
   };
 
   saveMessageToFile(userId, conversations);
-
-  sendMessageToAdmins(userId, content, { direction: role === 'user' ? '<-' : '->'});
-
 
   return conversations;
 };
