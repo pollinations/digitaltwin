@@ -3,6 +3,7 @@ import { downloadMedia } from "./downloadMedia.js";
 import { app } from './express.js';
 import sleep from 'await-sleep';
 import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
 dotenv.config();
 
@@ -34,13 +35,22 @@ const sendAudioMessage = async (number, url) => {
     to: `whatsapp:${number}`
   });
 };
+const sendRichCardMessage = async number => {
+  const message = await client.messages.create({
+    contentSid: "HX7aebb8de744bffa68578b49952bab41a",
+    from: `whatsapp:${process.env.WA_PHONE_NUMBER_ID}`,
+    to: `whatsapp:${number}`,
+    // messagingServiceSid: "MGXXXXXXXX"
+  });
 
-// Function to send a message, optionally with a media URL, to a recipient number via WhatsApp
+  console.log(message.body);
+}
+
+// Function to send a message, optionally with a media URL or as a rich card, to a recipient number via WhatsApp
 const sendMessage = async (message, recipientNumber, mediaUrl = '') => {
-  // Logging the message being sent, including the media URL if present
+  // Logging the message being sent, including the media URL or rich card variables if present
   console.log(`Sending message to ${recipientNumber}: ${message} with media URL: ${mediaUrl}`);
   try {
-    // Checking if a media URL is provided to decide between sending an audio or text message
     if (mediaUrl) {
       // Sending an audio message to the recipient
       await sendAudioMessage(recipientNumber, mediaUrl);
@@ -131,6 +141,11 @@ const testSendMessage = async () => {
   const testNumber = '+491754863246';
   const testMessage = 'Hello, this is a test message!';
   await sendMessage(testMessage, testNumber);
+  try {
+    await sendRichCardMessage(testNumber);
+  } catch (error) {
+    console.error("Failed to send rich card message:", error);
+  }
 };
 
 testSendMessage();

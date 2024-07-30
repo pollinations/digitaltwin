@@ -44,7 +44,7 @@ def process_and_mix_audio(tts_audio_path, background_audio_path=None, tape_hiss_
         logging.info("Background audio normalized.")
     
         background_board = Pedalboard([
-            Compressor(threshold_db=-24, ratio=10, release_ms=400),
+            Compressor(threshold_db=-18, ratio=10, release_ms=400),
             Gain(gain_db=0)
         ])
         
@@ -104,7 +104,7 @@ def process_and_mix_audio(tts_audio_path, background_audio_path=None, tape_hiss_
     logging.info("Final audio mix compressed and processed.")
     
     # Mix in the tape hiss audio after compression and reverb, making it significantly quieter
-    final_mixed_audio = final_mixed_audio + looped_tape_hiss_audio * 0.005  # Reduce tape hiss volume
+    final_mixed_audio = final_mixed_audio + looped_tape_hiss_audio * 0.001  # Reduce tape hiss volume
     logging.info("Tape hiss mixed into final audio.")
 
     # Generate a unique temporary file path for the mixed audio to avoid conflicts
