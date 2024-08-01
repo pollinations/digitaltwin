@@ -3,7 +3,6 @@ import util from 'util';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { addBufferToServer } from './express.js';
 
 const execAsync = util.promisify(exec);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -27,9 +26,7 @@ export const audioEffects = async ({ buffer }, backgroundFilePath) => {
     fs.unlinkSync(tempFilePath);
     fs.unlinkSync(outputPath);
 
-    const url = addBufferToServer({ buffer: outputBuffer, mimeType: "audio/mpeg" });
-
-    return url;
+    return { buffer: outputBuffer, mimeType: "audio/mpeg" };
 
   } catch (error) {
     throw new Error(`Failed to process audio with Python script: ${error}`);

@@ -24,7 +24,8 @@
 		"seedrandom": "^3.0.5",
 		"twilio": "^5.2.2",
 		"watch": "^1.0.2",
-		"whatsapp": "^0.0.5-Alpha"
+		"whatsapp": "^0.0.5-Alpha",
+		"ws": "^8.18.0"
 	},
 	"engines": {
 		"node": ">=18.0.0"

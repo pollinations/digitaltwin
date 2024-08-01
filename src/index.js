@@ -1,5 +1,5 @@
 import './dotenv.js';
-import { sendMessage, messageGenerator } from './sendMessage.js';
+import { sendMessage, messageGenerator } from './connectors/websocket.js';
 import { ttsRequest } from './elevenlabs.js';
 import { getChatResponse } from './getChatResponse.js';
 import { addMessage, loadConversations } from './conversations.js';
@@ -18,8 +18,13 @@ const init = async () => {
   for await (let { from, text, audio } of generator) {
     console.log("Message received", "text", text, "audio", audio ? true : false, "from", from);
 
-    if (audio)
+    if (audio) {
       text = await transcribeAudio(audio);
+      if (!text) {
+        console.log("Transcription returned null, skipping message processing.");
+        continue;
+      }
+    }
 
     conversations = addMessage(conversations, from, user(text));
 
@@ -38,11 +43,11 @@ const init = async () => {
           ]);
           console.log("ended voice and music generation promises", ttsAudio, musicgenAudioPath)
           // audio fx
-          const fxAudioUrl = ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
+          const fxAudioBuffer = ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
 
-          console.log("Sending audio message with effects", fxAudioUrl);
+          console.log("Sending audio message with effects", fxAudioBuffer);
           // send audio
-          await sendMessage(aiResponse, from, fxAudioUrl);
+          await sendMessage(aiResponse, from, fxAudioBuffer);
 
           console.log("Message sent to whatsapp");
 
