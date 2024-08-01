@@ -20,6 +20,7 @@
 		"node-fetch": "^2.7.0",
 		"openai": "^4.28.0",
 		"picocolors": "^1.0.0",
+		"playht": "^0.9.8",
 		"ramda": "^0.29.1",
 		"seedrandom": "^3.0.5",
 		"twilio": "^5.2.2",
