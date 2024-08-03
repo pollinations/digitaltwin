@@ -72,7 +72,14 @@ const SimplePersona = () => {
         <section className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold mb-4">Upload Voice</h2>
           <div className="mb-4">
+            <label
+              htmlFor="voiceUpload"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Limitation: MP3 and less than 4MB
+            </label>
             <input
+              id="voiceUpload"
               type="file"
               accept="audio/*"
               onChange={handleFileChange}
