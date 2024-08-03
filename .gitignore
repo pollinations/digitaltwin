@@ -133,3 +133,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .vercel
+
+# Local Netlify folder
+.netlify

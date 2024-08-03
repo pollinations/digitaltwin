@@ -1,0 +1,12 @@
+   [build]
+     functions = "netlify/functions"
+
+   [[redirects]]
+     from = "/playai/*"
+     to = "/.netlify/functions/proxyPlayAI/:splat"
+     status = 200
+
+   [[redirects]]
+     from = "/playht/*"
+     to = "/.netlify/functions/proxyPlayHT/:splat"
+     status = 200
