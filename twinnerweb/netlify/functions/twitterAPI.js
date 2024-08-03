@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
-import fetch from "node-fetch";
+// import fetch from "node-fetch";
 
-dotenv.config();
+// dotenv.config();
 
 /**
  * Fetches Twitter user data by username.
