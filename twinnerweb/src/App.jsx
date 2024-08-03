@@ -36,7 +36,7 @@ function App() {
     <div>
       <header className="bg-teal-500 text-white text-center py-4">
         <h1 className="text-3xl font-bold">Welcome to Twinner.me</h1>
-        <p className="text-lg">Create your personalized AI agent</p>
+        <p className="text-lg">Your AI twin</p>
       </header>
       <SimplePersona />
     </div>
