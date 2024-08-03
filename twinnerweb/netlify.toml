@@ -1,12 +1,22 @@
-   [build]
-     functions = "netlify/functions"
+[build]
+functions = "netlify/functions"
 
-   [[redirects]]
-     from = "/playai/*"
-     to = "/.netlify/functions/proxyPlayAI/:splat"
-     status = 200
+[[redirects]]
+from = "/playai/*"
+to = "/.netlify/functions/proxyPlayAI/:splat"
+status = 200
 
-   [[redirects]]
-     from = "/playht/*"
-     to = "/.netlify/functions/proxyPlayHT/:splat"
-     status = 200
+[[redirects]]
+from = "/playht/*"
+to = "/.netlify/functions/proxyPlayHT/:splat"
+status = 200
+
+[[redirects]]
+from = "/openai/*"
+to = "/.netlify/functions/proxyOpenAI/:splat"
+status = 200
+
+[[redirects]]
+from = "/twitter/*"
+to = "/.netlify/functions/twitterAPI/:splat"
+status = 200

@@ -4,6 +4,7 @@ import { createAgent } from "../api/playai";
 import { createInstantVoiceClone } from "../api/playht";
 import TwinView from "./TwinInterface";
 import { useLocalStorage } from "usehooks-ts";
+import { useTwitterData } from "../hooks/useTwitterData";
 
 const SimplePersona = () => {
   const [personaDescription, setPersonaDescription] = useLocalStorage(
@@ -14,6 +15,9 @@ const SimplePersona = () => {
   const [agentId, setAgentId] = useUrlState("", "agentId");
   const [voiceId, setVoiceId] = useUrlState("", "voiceId");
   const [file, setFile] = useState(null);
+  const [twitterUsername, setTwitterUsername] = useUrlState("", "twitter");
+  const [submittedUsername, setSubmittedUsername] = useState("");
+  const data = useTwitterData(submittedUsername);
 
   const handleSubmitPersonaDescription = async () => {
     console.log("Persona Description submitted:", personaDescription);
@@ -23,7 +27,7 @@ const SimplePersona = () => {
         greeting: `Hello I am ${agentName}. Let's chat.`,
         prompt: personaDescription,
         voice: voiceId,
-        description: personaDescription,
+        description: personaDescription.slice(0, 400),
       });
       setAgentId(agent.id);
     } catch (error) {
@@ -49,6 +53,14 @@ const SimplePersona = () => {
       reader.readAsDataURL(file);
     } catch (error) {
       console.error("Failed to upload voice:", error);
+    }
+  };
+
+  const handleTwitterSubmit = () => {
+    setSubmittedUsername(twitterUsername);
+    if (data) {
+      setAgentName(data.user.name);
+      setPersonaDescription(convertTwitterToPersona(data));
     }
   };
 
@@ -82,6 +94,30 @@ const SimplePersona = () => {
           )}
         </section>
         <section className="bg-white rounded-lg shadow-md p-6 mt-6">
+          <h2 className="text-2xl font-semibold mb-4">Twitter Username</h2>
+          <div className="mb-4">
+            <label
+              htmlFor="twitterUsername"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Twitter Username
+            </label>
+            <input
+              id="twitterUsername"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+              value={twitterUsername}
+              onChange={(e) => setTwitterUsername(e.target.value)}
+              placeholder="Enter Twitter username..."
+            />
+          </div>
+          <button
+            className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-300"
+            onClick={handleTwitterSubmit}
+          >
+            Submit
+          </button>
+        </section>
+        <section className="bg-white rounded-lg shadow-md p-6 mt-6">
           <h2 className="text-2xl font-semibold mb-4">Persona Description</h2>
           <div className="mb-4">
             <label
@@ -111,6 +147,7 @@ const SimplePersona = () => {
               value={personaDescription}
               onChange={(e) => setPersonaDescription(e.target.value)}
               placeholder="Describe your persona..."
+              rows="10"
             />
           </div>
           <button
@@ -132,3 +169,32 @@ const SimplePersona = () => {
 };
 
 export default SimplePersona;
+/**
+ * Converts Twitter data to a persona description in markdown format.
+ * @param {Object} data - The Twitter data object.
+ * @returns {string} - The persona description in markdown format.
+ */
+function convertTwitterToPersona(data) {
+  const { user, tweets } = data;
+  const tweetTexts = tweets.map((tweet) => `- ${tweet.text}`).join("\n");
+
+  return `
+You are a helpful and fun chatbot that is based on the following twitter profile.
+Try to impersonate the user taking into account all the information provided. 
+Be imaginative.
+Try to keep the user engaged so follow up your responses with questions.
+
+## Name
+${user.name}
+*${user.username}*
+
+## Location
+${user.location}
+
+## Description
+${user.description}
+
+## Tweets
+${tweetTexts}
+  `;
+}
