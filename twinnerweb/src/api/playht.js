@@ -1,36 +1,61 @@
-import fetch from "node-fetch";
-import dotenv from "dotenv";
-import fs from "fs";
+// import fetch from "node-fetch";
 import FormData from "form-data";
 
-dotenv.config();
+/**
+ * Lists the cloned voices that exist.
+ * @returns {Promise<void>} - Logs the list of cloned voices.
+ */
+export async function listClonedVoices() {
+    const url = '/playht/api/v2/cloned-voices/'; // Use the proxy endpoint
 
-const PLAYHT_USER_ID = process.env.PLAYHT_USER_ID;
-const PLAYHT_SECRET_KEY = process.env.PLAYHT_SECRET_KEY;
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorDetails = await response.json();
+            throw new Error(`Error: ${response.statusText}, Details: ${JSON.stringify(errorDetails)}`);
+        }
+
+        const responseData = await response.json();
+        console.log("List of cloned voices:", responseData);
+        return responseData;
+    } catch (error) {
+        console.error("Failed to list cloned voices:", error);
+        throw error;
+    }
+}
 
 /**
  * Creates an instant voice clone by providing a sample audio file via file upload.
- * @param {string} filePath - The path to the audio file.
- * @param {string} voiceName - The name for the new cloned voice.
+ * @param {Buffer} fileBuffer - The buffer of the audio file.
+ * @param {Object} options - Optional parameters for the voice clone.
+ * @param {string} options.voiceName - The name for the new cloned voice.
  * @returns {Promise<Object>} - The response from the API.
  */
-async function createInstantVoiceClone(filePath, voiceName) {
-    const url = 'https://api.play.ht/api/v2/cloned-voices/instant';
-    const form = new FormData();
-    form.append('sample_file', fs.createReadStream(filePath));
-    form.append('voice_name', voiceName);
+export async function createInstantVoiceClone(base64DataUrl, { voice_name }) {
 
-    const headers = {
-        'Authorization': `Bearer ${PLAYHT_SECRET_KEY}`,
-        'X-USER-ID': PLAYHT_USER_ID,
-        ...form.getHeaders()
-    };
+    const existingVoices = await listClonedVoices();
+    if (existingVoices.length > 0)
+        deleteClonedVoice(existingVoices[0].id);
+
+    const url = '/playht/api/v2/cloned-voices/instant'; // Use the proxy endpoint
+    const body = JSON.stringify({
+        sample_file: base64DataUrl,
+        voice_name
+    });
 
     try {
         const response = await fetch(url, {
             method: 'POST',
-            headers,
-            body: form
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body
         });
 
         if (!response.ok) {
@@ -47,4 +72,33 @@ async function createInstantVoiceClone(filePath, voiceName) {
     }
 }
 
-createInstantVoiceClone("/Users/thomash/Desktop/ala_whatsapp_voice_english.mp3", "Ala Haddaddi");
+/**
+ * Deletes a cloned voice by its ID.
+ * @param {string} voiceId - The ID of the cloned voice to delete.
+ * @returns {Promise<void>} - Logs the result of the deletion.
+ */
+export async function deleteClonedVoice(voiceId) {
+    const url = `/playht/api/v2/cloned-voices/`; // Use the proxy endpoint
+
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ voice_id: voiceId })
+        });
+
+        if (!response.ok) {
+            const errorDetails = await response.json();
+            throw new Error(`Error: ${response.statusText}, Details: ${JSON.stringify(errorDetails)}`);
+        }
+
+        console.log(`Cloned voice with ID ${voiceId} deleted successfully.`);
+    } catch (error) {
+        console.error(`Failed to delete cloned voice with ID ${voiceId}:`, error);
+        throw error;
+    }
+}
+
+// createInstantVoiceClone(fileBuffer, { voiceName: "Ala Haddaddi" });
