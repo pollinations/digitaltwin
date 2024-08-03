@@ -48,8 +48,7 @@ export async function handler(event) {
     console.log("Request URL:", url);
     console.log("Request headers:", headers);
 
-
-    let body = event.body;
+    let body = null;
 
     if (method === 'DELETE') {
         headers = {
@@ -60,7 +59,7 @@ export async function handler(event) {
         body = JSON.stringify(JSON.parse(event.body));
         console.log("delete, body:", body);
 
-    } else {
+    } else if (method !== 'GET' && method !== 'HEAD') {
         console.log("content-type:", event.headers['content-type']);
         // Convert JSON body to FormData if content-type is application/json
         if (event.headers['content-type'] && event.headers['content-type'].includes('application/json')) {
@@ -84,6 +83,8 @@ export async function handler(event) {
                 ...headers,
                 ...formData.getHeaders(), // Add FormData headers
             };
+        } else {
+            body = event.body;
         }
     }
 
