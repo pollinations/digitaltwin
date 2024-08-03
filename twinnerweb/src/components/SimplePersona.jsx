@@ -10,6 +10,7 @@ const SimplePersona = () => {
     "personaDescription",
     ""
   );
+  const [agentName, setAgentName] = useLocalStorage("agentName", "");
   const [agentId, setAgentId] = useUrlState("", "agentId");
   const [voiceId, setVoiceId] = useUrlState("", "voiceId");
   const [file, setFile] = useState(null);
@@ -18,8 +19,8 @@ const SimplePersona = () => {
     console.log("Persona Description submitted:", personaDescription);
     try {
       const agent = await createAgent({
-        displayName: "voicecapturebot",
-        greeting: "Hello, I'm a voice capture bot. Please talk to me.",
+        displayName: agentName,
+        greeting: `Hello I am ${agentName}. Let's chat.`,
         prompt: personaDescription,
         voice: voiceId,
         description: personaDescription,
@@ -51,7 +52,7 @@ const SimplePersona = () => {
     }
   };
 
-  const isSubmitDisabled = !personaDescription || !voiceId;
+  const isSubmitDisabled = !personaDescription || !voiceId || !agentName;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
@@ -84,6 +85,21 @@ const SimplePersona = () => {
           <h2 className="text-2xl font-semibold mb-4">Persona Description</h2>
           <div className="mb-4">
             <label
+              htmlFor="agentName"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Agent Name
+            </label>
+            <input
+              id="agentName"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+              value={agentName}
+              onChange={(e) => setAgentName(e.target.value)}
+              placeholder="Enter agent name..."
+            />
+          </div>
+          <div className="mb-4">
+            <label
               htmlFor="personaDescription"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
@@ -109,7 +125,7 @@ const SimplePersona = () => {
             Submit
           </button>
         </section>
-        <TwinView agentId={agentId} />
+        {agentId && <TwinView agentId={agentId} />}
       </main>
     </div>
   );
