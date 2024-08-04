@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUrlState } from "../hooks/useUrlState";
 import { createAgent } from "../api/playai";
 import { createInstantVoiceClone } from "../api/playht";
@@ -18,6 +18,13 @@ const SimplePersona = () => {
   const [twitterUsername, setTwitterUsername] = useUrlState("", "twitter");
   const [submittedUsername, setSubmittedUsername] = useState("");
   const data = useTwitterData(submittedUsername);
+
+  useEffect(() => {
+    if (data) {
+      setAgentName(data.user.name);
+      setPersonaDescription(convertTwitterToPersona(data));
+    }
+  }, [data]);
 
   const handleSubmitPersonaDescription = async () => {
     console.log("Persona Description submitted:", personaDescription);
@@ -58,11 +65,14 @@ const SimplePersona = () => {
 
   const handleTwitterSubmit = () => {
     setSubmittedUsername(twitterUsername);
-    if (data) {
+  };
+
+  useEffect(() => {
+    if (submittedUsername && data) {
       setAgentName(data.user.name);
       setPersonaDescription(convertTwitterToPersona(data));
     }
-  };
+  }, [submittedUsername, data]);
 
   const isSubmitDisabled = !personaDescription || !voiceId || !agentName;
 
