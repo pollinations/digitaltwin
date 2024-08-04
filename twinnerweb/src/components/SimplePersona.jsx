@@ -26,22 +26,38 @@ const SimplePersona = () => {
     }
   }, [data]);
 
-  const handleSubmitPersonaDescription = async () => {
-    console.log("Persona Description submitted:", personaDescription);
-    try {
-      const agent = await createAgent({
-        displayName: agentName,
-        greeting: `Hello I am ${agentName}. Let's chat.`,
-        prompt: personaDescription,
-        voice: voiceId,
-        description: personaDescription.slice(0, 400),
-      });
-      setAgentId(agent.id);
-    } catch (error) {
-      console.error("Failed to create agent:", error);
-    }
-  };
+  const isSubmitDisabled = !personaDescription || !voiceId || !agentName;
 
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+      <main className="container mx-auto px-4">
+        <UploadVoiceSection
+          file={file}
+          setFile={setFile}
+          setVoiceId={setVoiceId}
+          voiceId={voiceId}
+        />
+        <TwitterUsernameSection
+          twitterUsername={twitterUsername}
+          setTwitterUsername={setTwitterUsername}
+          setSubmittedUsername={setSubmittedUsername}
+        />
+        <PersonaDescriptionSection
+          agentName={agentName}
+          setAgentName={setAgentName}
+          personaDescription={personaDescription}
+          setPersonaDescription={setPersonaDescription}
+          setAgentId={setAgentId}
+          voiceId={voiceId}
+          isSubmitDisabled={isSubmitDisabled}
+        />
+        {agentId && <TwinView agentId={agentId} />}
+      </main>
+    </div>
+  );
+};
+
+const UploadVoiceSection = ({ file, setFile, setVoiceId, voiceId }) => {
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -63,125 +79,149 @@ const SimplePersona = () => {
     }
   };
 
+  return (
+    <section className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-semibold mb-4">Upload Voice</h2>
+      <div className="mb-4">
+        <label
+          htmlFor="voiceUpload"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Limitation: MP3 and less than 4MB
+        </label>
+        <input
+          id="voiceUpload"
+          type="file"
+          accept="audio/*"
+          onChange={handleFileChange}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+      </div>
+      <button
+        className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-300"
+        onClick={handleUploadVoice}
+      >
+        Upload
+      </button>
+      {voiceId && (
+        <div className="mt-4">
+          <p className="text-sm font-medium text-gray-700">
+            Voice ID: {voiceId}
+          </p>
+        </div>
+      )}
+    </section>
+  );
+};
+
+const TwitterUsernameSection = ({
+  twitterUsername,
+  setTwitterUsername,
+  setSubmittedUsername,
+}) => {
   const handleTwitterSubmit = () => {
     setSubmittedUsername(twitterUsername);
   };
 
-  useEffect(() => {
-    if (submittedUsername && data) {
-      setAgentName(data.user.name);
-      setPersonaDescription(convertTwitterToPersona(data));
-    }
-  }, [submittedUsername, data]);
+  return (
+    <section className="bg-white rounded-lg shadow-md p-6 mt-6">
+      <h2 className="text-2xl font-semibold mb-4">Twitter Username</h2>
+      <div className="mb-4">
+        <label
+          htmlFor="twitterUsername"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Twitter Username
+        </label>
+        <input
+          id="twitterUsername"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+          value={twitterUsername}
+          onChange={(e) => setTwitterUsername(e.target.value)}
+          placeholder="Enter Twitter username..."
+        />
+      </div>
+      <button
+        className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-300"
+        onClick={handleTwitterSubmit}
+      >
+        Submit
+      </button>
+    </section>
+  );
+};
 
-  const isSubmitDisabled = !personaDescription || !voiceId || !agentName;
+const PersonaDescriptionSection = ({
+  agentName,
+  setAgentName,
+  personaDescription,
+  setPersonaDescription,
+  setAgentId,
+  voiceId,
+  isSubmitDisabled,
+}) => {
+  const handleSubmitPersonaDescription = async () => {
+    console.log("Persona Description submitted:", personaDescription);
+    try {
+      const agent = await createAgent({
+        displayName: agentName,
+        greeting: `Hello I am ${agentName}. Let's chat.`,
+        prompt: personaDescription,
+        voice: voiceId,
+        description: personaDescription.slice(0, 400),
+      });
+      setAgentId(agent.id);
+    } catch (error) {
+      console.error("Failed to create agent:", error);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-      <main className="container mx-auto px-4">
-        <section className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold mb-4">Upload Voice</h2>
-          <div className="mb-4">
-            <label
-              htmlFor="voiceUpload"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Limitation: MP3 and less than 4MB
-            </label>
-            <input
-              id="voiceUpload"
-              type="file"
-              accept="audio/*"
-              onChange={handleFileChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          <button
-            className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-300"
-            onClick={handleUploadVoice}
-          >
-            Upload
-          </button>
-          {voiceId && (
-            <div className="mt-4">
-              <p className="text-sm font-medium text-gray-700">
-                Voice ID: {voiceId}
-              </p>
-            </div>
-          )}
-        </section>
-        <section className="bg-white rounded-lg shadow-md p-6 mt-6">
-          <h2 className="text-2xl font-semibold mb-4">Twitter Username</h2>
-          <div className="mb-4">
-            <label
-              htmlFor="twitterUsername"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Twitter Username
-            </label>
-            <input
-              id="twitterUsername"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-              value={twitterUsername}
-              onChange={(e) => setTwitterUsername(e.target.value)}
-              placeholder="Enter Twitter username..."
-            />
-          </div>
-          <button
-            className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-300"
-            onClick={handleTwitterSubmit}
-          >
-            Submit
-          </button>
-        </section>
-        <section className="bg-white rounded-lg shadow-md p-6 mt-6">
-          <h2 className="text-2xl font-semibold mb-4">Persona Description</h2>
-          <div className="mb-4">
-            <label
-              htmlFor="agentName"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Agent Name
-            </label>
-            <input
-              id="agentName"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-              value={agentName}
-              onChange={(e) => setAgentName(e.target.value)}
-              placeholder="Enter agent name..."
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="personaDescription"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Persona Description
-            </label>
-            <textarea
-              id="personaDescription"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-              value={personaDescription}
-              onChange={(e) => setPersonaDescription(e.target.value)}
-              placeholder="Describe your persona..."
-              rows="10"
-            />
-          </div>
-          <button
-            className={`bg-teal-500 text-white px-4 py-2 rounded-md transition duration-300 ${
-              isSubmitDisabled
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-teal-600"
-            }`}
-            onClick={handleSubmitPersonaDescription}
-            disabled={isSubmitDisabled}
-          >
-            Submit
-          </button>
-        </section>
-        {agentId && <TwinView agentId={agentId} />}
-      </main>
-    </div>
+    <section className="bg-white rounded-lg shadow-md p-6 mt-6">
+      <h2 className="text-2xl font-semibold mb-4">Persona Description</h2>
+      <div className="mb-4">
+        <label
+          htmlFor="agentName"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Agent Name
+        </label>
+        <input
+          id="agentName"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+          value={agentName}
+          onChange={(e) => setAgentName(e.target.value)}
+          placeholder="Enter agent name..."
+        />
+      </div>
+      <div className="mb-4">
+        <label
+          htmlFor="personaDescription"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Persona Description
+        </label>
+        <textarea
+          id="personaDescription"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+          value={personaDescription}
+          onChange={(e) => setPersonaDescription(e.target.value)}
+          placeholder="Describe your persona..."
+          rows="10"
+        />
+      </div>
+      <button
+        className={`bg-teal-500 text-white px-4 py-2 rounded-md transition duration-300 ${
+          isSubmitDisabled
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-teal-600"
+        }`}
+        onClick={handleSubmitPersonaDescription}
+        disabled={isSubmitDisabled}
+      >
+        Submit
+      </button>
+    </section>
   );
 };
 

@@ -34,7 +34,7 @@ async function fetchTwitterUserData(username) {
  * @param {number} [maxResults=20] - The maximum number of tweets to fetch.
  * @returns {Promise<Object>} - The response from the Twitter API.
  */
-async function fetchTweetsByUserId(userId, maxResults = 20) {
+async function fetchTweetsByUserId(userId, maxResults = 50) {
     const url = `https://api.twitter.com/2/users/${userId}/tweets?max_results=${maxResults}`;
     const headers = {
         'Authorization': `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
