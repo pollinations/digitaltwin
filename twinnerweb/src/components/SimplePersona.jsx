@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useUrlState } from "../hooks/useUrlState";
 import { createAgent } from "../api/playai";
-import { createInstantVoiceClone } from "../api/playht";
 import TwinView from "./TwinInterface";
 import { useLocalStorage } from "usehooks-ts";
 import { useTwitterData } from "../hooks/useTwitterData";
+import UploadVoiceSection from "./UploadVoiceSection";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 const SimplePersona = () => {
   const [personaDescription, setPersonaDescription] = useLocalStorage(
@@ -14,33 +18,17 @@ const SimplePersona = () => {
   const [agentName, setAgentName] = useLocalStorage("agentName", "");
   const [agentId, setAgentId] = useUrlState("", "agentId");
   const [voiceId, setVoiceId] = useUrlState("", "voiceId");
-  const [file, setFile] = useState(null);
   const [twitterUsername, setTwitterUsername] = useUrlState("", "twitter");
-  const [submittedUsername, setSubmittedUsername] = useState("");
-  const data = useTwitterData(submittedUsername);
-
-  useEffect(() => {
-    if (data) {
-      setAgentName(data.user.name);
-      setPersonaDescription(convertTwitterToPersona(data));
-    }
-  }, [data]);
-
-  const isSubmitDisabled = !personaDescription || !voiceId || !agentName;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
       <main className="container mx-auto px-4">
-        <UploadVoiceSection
-          file={file}
-          setFile={setFile}
-          setVoiceId={setVoiceId}
-          voiceId={voiceId}
-        />
+        <UploadVoiceSection setVoiceId={setVoiceId} voiceId={voiceId} />
         <TwitterUsernameSection
           twitterUsername={twitterUsername}
           setTwitterUsername={setTwitterUsername}
-          setSubmittedUsername={setSubmittedUsername}
+          setAgentName={setAgentName}
+          setPersonaDescription={setPersonaDescription}
         />
         <PersonaDescriptionSection
           agentName={agentName}
@@ -49,7 +37,7 @@ const SimplePersona = () => {
           setPersonaDescription={setPersonaDescription}
           setAgentId={setAgentId}
           voiceId={voiceId}
-          isSubmitDisabled={isSubmitDisabled}
+          isSubmitDisabled={!personaDescription || !voiceId || !agentName}
         />
         {agentId && <TwinView agentId={agentId} />}
       </main>
@@ -57,97 +45,49 @@ const SimplePersona = () => {
   );
 };
 
-const UploadVoiceSection = ({ file, setFile, setVoiceId, voiceId }) => {
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleUploadVoice = async () => {
-    if (!file) return;
-    try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64DataUrl = reader.result;
-        const voiceClone = await createInstantVoiceClone(base64DataUrl, {
-          voice_name: "UploadedVoice",
-        });
-        setVoiceId(voiceClone.id);
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error("Failed to upload voice:", error);
-    }
-  };
-
-  return (
-    <section className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-semibold mb-4">Upload Voice</h2>
-      <div className="mb-4">
-        <label
-          htmlFor="voiceUpload"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Limitation: MP3 and less than 4MB
-        </label>
-        <input
-          id="voiceUpload"
-          type="file"
-          accept="audio/*"
-          onChange={handleFileChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-        />
-      </div>
-      <button
-        className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-300"
-        onClick={handleUploadVoice}
-      >
-        Upload
-      </button>
-      {voiceId && (
-        <div className="mt-4">
-          <p className="text-sm font-medium text-gray-700">
-            Voice ID: {voiceId}
-          </p>
-        </div>
-      )}
-    </section>
-  );
-};
-
 const TwitterUsernameSection = ({
   twitterUsername,
   setTwitterUsername,
-  setSubmittedUsername,
+  setAgentName,
+  setPersonaDescription,
 }) => {
+  const [submittedUsername, setSubmittedUsername] = useState("");
+  const data = useTwitterData(submittedUsername);
+
+  useEffect(() => {
+    if (data) {
+      setAgentName(data.user.name);
+      setPersonaDescription(convertTwitterToPersona(data));
+    }
+  }, [data, setAgentName, setPersonaDescription]);
+
   const handleTwitterSubmit = () => {
     setSubmittedUsername(twitterUsername);
   };
 
   return (
-    <section className="bg-white rounded-lg shadow-md p-6 mt-6">
-      <h2 className="text-2xl font-semibold mb-4">Twitter Username</h2>
-      <div className="mb-4">
-        <label
-          htmlFor="twitterUsername"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Twitter Username
-        </label>
-        <input
-          id="twitterUsername"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-          value={twitterUsername}
-          onChange={(e) => setTwitterUsername(e.target.value)}
-          placeholder="Enter Twitter username..."
-        />
-      </div>
-      <button
-        className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-300"
-        onClick={handleTwitterSubmit}
-      >
-        Submit
-      </button>
-    </section>
+    <Card className="mt-6">
+      <CardHeader>
+        <h2 className="text-2xl font-semibold mb-4">Twitter Username</h2>
+      </CardHeader>
+      <CardContent>
+        <div className="mb-4">
+          <label
+            htmlFor="twitterUsername"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Twitter Username
+          </label>
+          <Input
+            id="twitterUsername"
+            value={twitterUsername}
+            onChange={(e) => setTwitterUsername(e.target.value)}
+            placeholder="Enter Twitter username..."
+          />
+        </div>
+        <Button onClick={handleTwitterSubmit}>Submit</Button>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -177,51 +117,49 @@ const PersonaDescriptionSection = ({
   };
 
   return (
-    <section className="bg-white rounded-lg shadow-md p-6 mt-6">
-      <h2 className="text-2xl font-semibold mb-4">Persona Description</h2>
-      <div className="mb-4">
-        <label
-          htmlFor="agentName"
-          className="block text-sm font-medium text-gray-700 mb-1"
+    <Card className="mt-6">
+      <CardHeader>
+        <h2 className="text-2xl font-semibold mb-4">Persona Description</h2>
+      </CardHeader>
+      <CardContent>
+        <div className="mb-4">
+          <label
+            htmlFor="agentName"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Agent Name
+          </label>
+          <Input
+            id="agentName"
+            value={agentName}
+            onChange={(e) => setAgentName(e.target.value)}
+            placeholder="Enter agent name..."
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="personaDescription"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Persona Description
+          </label>
+          <Textarea
+            id="personaDescription"
+            value={personaDescription}
+            onChange={(e) => setPersonaDescription(e.target.value)}
+            placeholder="Describe your persona..."
+            rows="10"
+          />
+        </div>
+        <Button
+          onClick={handleSubmitPersonaDescription}
+          disabled={isSubmitDisabled}
+          className={isSubmitDisabled ? "opacity-50 cursor-not-allowed" : ""}
         >
-          Agent Name
-        </label>
-        <input
-          id="agentName"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-          value={agentName}
-          onChange={(e) => setAgentName(e.target.value)}
-          placeholder="Enter agent name..."
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="personaDescription"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Persona Description
-        </label>
-        <textarea
-          id="personaDescription"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-          value={personaDescription}
-          onChange={(e) => setPersonaDescription(e.target.value)}
-          placeholder="Describe your persona..."
-          rows="10"
-        />
-      </div>
-      <button
-        className={`bg-teal-500 text-white px-4 py-2 rounded-md transition duration-300 ${
-          isSubmitDisabled
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-teal-600"
-        }`}
-        onClick={handleSubmitPersonaDescription}
-        disabled={isSubmitDisabled}
-      >
-        Submit
-      </button>
-    </section>
+          Submit
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
