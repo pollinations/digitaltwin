@@ -19,9 +19,6 @@ const init = async () => {
   for await (let { from, text, audio } of generator) {
     console.log("Message received", "text", text, "audio", audio ? true : false, "from", from);
 
-    // Log the incoming message to Google Sheet
-    await logMessageToSheet({ from, text, audio, type: 'incoming', metadata: {} });
-
     if (audio) {
       text = await transcribeAudio(audio);
       if (!text) {
@@ -29,6 +26,9 @@ const init = async () => {
         continue;
       }
     }
+
+    // Log the incoming message to Google Sheet
+    await logMessageToSheet({ from, text, audio, type: 'incoming', metadata: {} });
 
     conversations = addMessage(conversations, from, user(text));
 
