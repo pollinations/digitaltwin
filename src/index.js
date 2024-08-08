@@ -1,5 +1,5 @@
 import './dotenv.js';
-import { sendMessage, messageGenerator } from './connectors/websocket.js';
+import { sendMessage, messageGenerator } from './connectors/whatsapp.js';
 import { ttsRequest } from './elevenlabs.js';
 import { getChatResponse } from './getChatResponse.js';
 import { addMessage, loadConversations } from './conversations.js';
