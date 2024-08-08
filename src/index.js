@@ -9,6 +9,7 @@ import { generateAudio } from './musicgen.js';
 import { transcribeAudio } from './whisper.js';
 import { parseActions } from './botActions.js';
 import { withTimeout } from './utils/withTimeout.js';
+import { logMessageToSheet } from './googleSheetsLogger.js';
 
 let conversations = loadConversations();
 
@@ -17,6 +18,9 @@ const init = async () => {
 
   for await (let { from, text, audio } of generator) {
     console.log("Message received", "text", text, "audio", audio ? true : false, "from", from);
+
+    // Log the incoming message to Google Sheet
+    await logMessageToSheet({ from, text, audio, type: 'incoming', metadata: {} });
 
     if (audio) {
       text = await transcribeAudio(audio);
@@ -33,8 +37,10 @@ const init = async () => {
       conversations = addMessage(conversations, from, assistant(aiResponse));
       const { voiceEnabled } = parseActions(conversations[from])
 
-      if (voiceEnabled) {
+      // Log the AI response to Google Sheet
+      await logMessageToSheet({ from, text: aiResponse, audio: voiceEnabled, type: 'outgoing', metadata: {} });
 
+      if (voiceEnabled) {
         try {
           console.log("started voice and music generation promises")
           const [ttsAudio, musicgenAudioPath] = await Promise.all([
@@ -66,6 +72,9 @@ const init = async () => {
     } catch (e) {
       console.error("Failed to process message:", e);
       await sendMessage(`Sorry, I encountered an error processing your request. Error: ${e.message}`, from);
+
+      // Log the error message to Google Sheet
+      await logMessageToSheet({ from, text: e.message, type: 'error', metadata: {} });
     }
   }
 };
