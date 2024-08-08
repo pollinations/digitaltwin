@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import './dotenv.js';
-import { addBufferToServer } from './express.js';
 
 /**
  * @param text The sentence to be converted to speech
@@ -21,7 +20,7 @@ const ttsRequest = async (text) => {
   };
 
   const buffer = await elevenlabs(elevenLabsUrl, data);
-  
+
 
   return {
     buffer,
@@ -35,19 +34,19 @@ const ttsRequest = async (text) => {
 // try to slice by punctuation i.e. the last letters,words 
 // up to the last punctuation if the size exceeds
 function sliceText(text) {
-	const maxCharacters = 1000;
-	if (text.length > maxCharacters) {
-		let slicedText = text.slice(0, maxCharacters);
-		const lastPunctuation = slicedText.match(/.*[.!?]/g);
-		const lastSpace = slicedText.match(/.* /g);
-		if (lastPunctuation && lastPunctuation[0]) {
-			slicedText = lastPunctuation[0];
-		} else if (lastSpace && lastSpace[0]) {
-			slicedText = lastSpace[0];
-		}
-		return slicedText;
-	}
-	return text;
+  const maxCharacters = 1000;
+  if (text.length > maxCharacters) {
+    let slicedText = text.slice(0, maxCharacters);
+    const lastPunctuation = slicedText.match(/.*[.!?]/g);
+    const lastSpace = slicedText.match(/.* /g);
+    if (lastPunctuation && lastPunctuation[0]) {
+      slicedText = lastPunctuation[0];
+    } else if (lastSpace && lastSpace[0]) {
+      slicedText = lastSpace[0];
+    }
+    return slicedText;
+  }
+  return text;
 }
 
 

@@ -44,7 +44,7 @@ def process_and_mix_audio(tts_audio_path, background_audio_path=None, tape_hiss_
         logging.info("Background audio normalized.")
     
         background_board = Pedalboard([
-            Compressor(threshold_db=-24, ratio=10, release_ms=400),
+            Compressor(threshold_db=-18, ratio=10, release_ms=400),
             Gain(gain_db=0)
         ])
         
