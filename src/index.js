@@ -1,5 +1,5 @@
 import './dotenv.js';
-import { sendMessage, messageGenerator } from './sendMessage.js';
+import { sendMessage, messageGenerator } from './connectors/whatsapp.js';
 import { ttsRequest } from './elevenlabs.js';
 import { getChatResponse } from './getChatResponse.js';
 import { addMessage, loadConversations } from './conversations.js';
@@ -9,6 +9,7 @@ import { generateAudio } from './musicgen.js';
 import { transcribeAudio } from './whisper.js';
 import { parseActions } from './botActions.js';
 import { withTimeout } from './utils/withTimeout.js';
+import { logMessageToSheet } from './googleSheetsLogger.js';
 
 let conversations = loadConversations();
 
@@ -18,8 +19,16 @@ const init = async () => {
   for await (let { from, text, audio } of generator) {
     console.log("Message received", "text", text, "audio", audio ? true : false, "from", from);
 
-    if (audio)
+    // Log the incoming message to Google Sheet
+    await logMessageToSheet({ from, text, audio, type: 'incoming', metadata: {} });
+
+    if (audio) {
       text = await transcribeAudio(audio);
+      if (!text) {
+        console.log("Transcription returned null, skipping message processing.");
+        continue;
+      }
+    }
 
     conversations = addMessage(conversations, from, user(text));
 
@@ -28,8 +37,10 @@ const init = async () => {
       conversations = addMessage(conversations, from, assistant(aiResponse));
       const { voiceEnabled } = parseActions(conversations[from])
 
-      if (voiceEnabled) {
+      // Log the AI response to Google Sheet
+      await logMessageToSheet({ from, text: aiResponse, audio: voiceEnabled, type: 'outgoing', metadata: {} });
 
+      if (voiceEnabled) {
         try {
           console.log("started voice and music generation promises")
           const [ttsAudio, musicgenAudioPath] = await Promise.all([
@@ -38,11 +49,11 @@ const init = async () => {
           ]);
           console.log("ended voice and music generation promises", ttsAudio, musicgenAudioPath)
           // audio fx
-          const fxAudioUrl = ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
+          const fxAudioBuffer = ttsAudio ? await audioEffects(ttsAudio, musicgenAudioPath) : null;
 
-          console.log("Sending audio message with effects", fxAudioUrl);
+          console.log("Sending audio message with effects", fxAudioBuffer);
           // send audio
-          await sendMessage(aiResponse, from, fxAudioUrl);
+          await sendMessage(aiResponse, from, fxAudioBuffer);
 
           console.log("Message sent to whatsapp");
 
@@ -61,6 +72,9 @@ const init = async () => {
     } catch (e) {
       console.error("Failed to process message:", e);
       await sendMessage(`Sorry, I encountered an error processing your request. Error: ${e.message}`, from);
+
+      // Log the error message to Google Sheet
+      await logMessageToSheet({ from, text: e.message, type: 'error', metadata: {} });
     }
   }
 };
