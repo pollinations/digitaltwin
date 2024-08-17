@@ -1,11 +1,11 @@
-import { ACTION_INITIAL_STATE, DISABLE_VOCIE, ENABLE_VOICE } from "./persona.js";
+import { ACTION_INITIAL_STATE, DISABLE_VOICE, ENABLE_VOICE } from "./persona.js";
 
 const initialState = ACTION_INITIAL_STATE;
 
 export const parseActions = history => {
   console.log("Parsing actions from history...");
   return history.reduce((state, { content }) => {
-    let disableIndex = content.lastIndexOf(DISABLE_VOCIE);
+    let disableIndex = content.lastIndexOf(DISABLE_VOICE);
     let enableIndex = content.lastIndexOf(ENABLE_VOICE);
 
     // if enable index is 3 ahead of disableIndexit found ATIVAR_VOZ as a substring
@@ -18,7 +18,7 @@ export const parseActions = history => {
       console.log(`Action found - Disable Index: ${disableIndex}, Enable Index: ${enableIndex}`);
     }
 
-  
+
     if (disableIndex > enableIndex) {
       console.log("Voice disabled based on the latest action.");
       return { ...state, voiceEnabled: false };

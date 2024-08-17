@@ -87,13 +87,13 @@ const handleWebhook = async (req, res) => {
 
 // Message handler for processing incoming messages
 const handleMessage = async (messageData) => {
-  const from = messageData.WaId;
+  const channel = messageData.WaId;
   switch (messageData.MessageType) {
     case "text":
-      await processTextMessage(from, messageData.Body);
+      await processTextMessage(channel, messageData.Body);
       break;
     case "audio":
-      await processAudioMessage(from, messageData);
+      await processAudioMessage(channel, messageData);
       break;
     default:
       console.log(`Unhandled message type: ${messageData.MessageType}`);
@@ -101,17 +101,17 @@ const handleMessage = async (messageData) => {
 };
 
 // Process text messages
-const processTextMessage = async (from, text) => {
-  console.log("processing message from", from);
-  await Promise.all(messageListeners.map(listener => listener({ from, text })));
+const processTextMessage = async (channel, text) => {
+  console.log("processing message from", channel);
+  await Promise.all(messageListeners.map(listener => listener({ channel, text })));
 };
 
 // Process audio messages
-const processAudioMessage = async (from, audioDetails) => {
+const processAudioMessage = async (channel, audioDetails) => {
   const buffer = await downloadMedia(audioDetails.MediaUrl0);
-  console.log(`Media buffer for audio message from ${from}:`, buffer);
-  console.log(`Received audio message from ${from}:`, audioDetails);
-  await Promise.all(messageListeners.map(listener => listener({ from, audio: buffer })));
+  console.log(`Media buffer for audio message from ${channel}:`, buffer);
+  console.log(`Received audio message from ${channel}:`, audioDetails);
+  await Promise.all(messageListeners.map(listener => listener({ channel, audio: buffer })));
 };
 
 let messageListeners = [];
