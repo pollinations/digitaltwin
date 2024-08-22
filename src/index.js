@@ -28,7 +28,8 @@ const init = async () => {
   for await (let { channel, text, audio, name } of generator) {
     // Only respond to messages from specific channels and users
     if (
-      (channel !== '889573359111774329' && channel !== '1273050575226802280' && channel !== '1166364066135154799')
+      false
+      // (channel !== '889573359111774329' && channel !== '1273050575226802280' && channel !== '1166364066135154799')
       //  ||
       // (name !== 'the.white.tiger' && name !== 'thomash_pollinations')
     ) {
