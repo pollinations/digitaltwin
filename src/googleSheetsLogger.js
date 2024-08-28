@@ -38,7 +38,7 @@ export const logMessageToSheet = async (message) => {
             new Date().toISOString(),
             message.channel, // Renamed from 'from' to 'channel'
             message.text,
-            message.metadata.type,
+            message.type,
             message.audio ? 'Yes' : 'No',
             JSON.stringify(message.metadata || {}),
             message.name // Ensure name is logged

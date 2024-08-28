@@ -140,9 +140,9 @@ app.get('/webhook', handleWebhook);
 
 // Test sendMessage function
 const testSendMessage = async () => {
-  const testNumber = '+491754863246';
-  const testMessage = 'Hello, this is a test message!';
-  await sendMessage(testMessage, testNumber);
+  const testNumber = '+5511984496102';
+  // const testMessage = 'Hello, this is a test message!';
+  // await sendMessage(testMessage, testNumber);
   try {
     await sendRichCardMessage(testNumber);
   } catch (error) {
@@ -150,6 +150,6 @@ const testSendMessage = async () => {
   }
 };
 
-testSendMessage();
+// testSendMessage();
 
 export { sendMessage, messageGenerator };
