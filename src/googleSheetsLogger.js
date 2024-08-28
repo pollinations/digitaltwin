@@ -38,7 +38,7 @@ export const logMessageToSheet = async (message) => {
             new Date().toISOString(),
             message.from,
             message.text,
-            message.metadata.type,
+            message.type,
             message.audio ? 'Yes' : 'No',
             JSON.stringify(message.metadata || {})
         ]

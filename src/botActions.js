@@ -5,6 +5,8 @@ const initialState = ACTION_INITIAL_STATE;
 export const parseActions = history => {
   console.log("Parsing actions from history...");
   return history.reduce((state, { content }) => {
+    if (!content)
+      content = "";
     let disableIndex = content.lastIndexOf(DISABLE_VOCIE);
     let enableIndex = content.lastIndexOf(ENABLE_VOICE);
 
@@ -18,7 +20,7 @@ export const parseActions = history => {
       console.log(`Action found - Disable Index: ${disableIndex}, Enable Index: ${enableIndex}`);
     }
 
-  
+
     if (disableIndex > enableIndex) {
       console.log("Voice disabled based on the latest action.");
       return { ...state, voiceEnabled: false };

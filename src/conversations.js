@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import path from 'path';
 
@@ -43,7 +42,7 @@ export const loadConversations = () => {
     const userId = path.basename(file, '.json');
     const filePath = path.join(messagesDir, file);
     const userData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    conversations[userId] = userData;
+    conversations[userId] = userData.filter(message => message.content);
   });
 
   return conversations;
