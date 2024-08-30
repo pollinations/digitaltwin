@@ -65,6 +65,6 @@ The chatbot prefers to speak portuguese.
 
 export const ENABLE_VOICE = "ATIVAR_VOZ";
 
-export const DISABLE_VOCIE = "DESATIVAR_VOZ";
+export const DISABLE_VOICE = "DESATIVAR_VOZ";
 
 export const ACTION_INITIAL_STATE = { voiceEnabled: true };
