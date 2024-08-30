@@ -11,6 +11,7 @@ import { parseActions } from './botActions.js';
 import { withTimeout } from './utils/withTimeout.js';
 import { logMessageToSheet } from './googleSheetsLogger.js';
 import sleep from 'await-sleep';
+import { welcomeMessage } from './persona.js';
 
 let conversations = loadConversations();
 
@@ -50,11 +51,12 @@ const init = async () => {
     // Log the incoming message to Google Sheet
     // await logMessageToSheet({ channel, text, audio, type: 'incoming', metadata: {} });
 
+    const isNewConversation = !conversations[channel];
     conversations = addMessage(conversations, channel, user(text, name));
 
-    if (!shouldRespond()) {
-      console.log("Randomly chose not to respond to this message.");
-      continue;
+    // Send the welcome message if it's a new conversation
+    if (isNewConversation) {
+      await sendMessage(welcomeMessage, channel);
     }
 
     try {

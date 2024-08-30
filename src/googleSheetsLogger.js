@@ -38,8 +38,10 @@ export const logMessageToSheet = async (message) => {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    const countryCode = message.from.slice(0, 2);
-    const hash = crypto.createHash('md5').update(message.from).digest('hex').slice(0, 4);
+    console.log("Logging message to Google Sheet", message);
+    const from = message.from || message.channel;
+    const countryCode = from.slice(0, 2);
+    const hash = crypto.createHash('md5').update(from).digest('hex').slice(0, 4);
 
     const values = [
         [

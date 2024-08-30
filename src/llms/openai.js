@@ -23,15 +23,9 @@ const getChatResponse = async (history, userId) => {
 
   console.log("calling chatgpt with history (last 3 shown)", historyWithSystemPrompt.slice(-3));
 
-  const responses = await Promise.all([
-    getOpenAIResponse(historyWithSystemPrompt),
-    getOpenAIResponse(historyWithSystemPrompt),
-    getOpenAIResponse(historyWithSystemPrompt)
-  ]);
-
-  const combinedResponse = responses.join('\n---\n');
-  console.log("got ai responses", combinedResponse);
-  return combinedResponse;
+  const response = await getOpenAIResponse(historyWithSystemPrompt);
+  console.log("got ai response", response);
+  return response;
 };
 
 /**

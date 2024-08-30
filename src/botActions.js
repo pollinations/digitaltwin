@@ -7,7 +7,7 @@ export const parseActions = history => {
   return history.reduce((state, { content }) => {
     if (!content)
       content = "";
-    let disableIndex = content.lastIndexOf(DISABLE_VOCIE);
+    let disableIndex = content.lastIndexOf(DISABLE_VOICE);
     let enableIndex = content.lastIndexOf(ENABLE_VOICE);
 
     // if enable index is 3 ahead of disableIndexit found ATIVAR_VOZ as a substring
