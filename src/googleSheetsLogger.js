@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -21,6 +22,10 @@ const initializeAuth = async () => {
     }
 };
 
+/**
+ * Logs a message to the Google Sheet.
+ * @param {Object} message - The message object containing details to log.
+ */
 export const logMessageToSheet = async (message) => {
     if (!auth) {
         await initializeAuth();
@@ -33,10 +38,14 @@ export const logMessageToSheet = async (message) => {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
+    const countryCode = message.from.slice(0, 2);
+    const hash = crypto.createHash('md5').update(message.from).digest('hex').slice(0, 4);
+
     const values = [
         [
             new Date().toISOString(),
-            message.from,
+            countryCode,
+            hash,
             message.text,
             message.type,
             message.audio ? 'Yes' : 'No',
