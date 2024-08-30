@@ -1,4 +1,4 @@
-import { ACTION_INITIAL_STATE, DISABLE_VOCIE, ENABLE_VOICE } from "./persona.js";
+import { ACTION_INITIAL_STATE, DISABLE_VOICE, ENABLE_VOICE } from "./persona.js";
 
 const initialState = ACTION_INITIAL_STATE;
 

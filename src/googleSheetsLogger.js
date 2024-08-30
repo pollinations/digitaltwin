@@ -49,7 +49,8 @@ export const logMessageToSheet = async (message) => {
             message.text,
             message.type,
             message.audio ? 'Yes' : 'No',
-            JSON.stringify(message.metadata || {})
+            JSON.stringify(message.metadata || {}),
+            message.name // Ensure name is logged
         ]
     ];
 
@@ -69,7 +70,7 @@ export const logMessageToSheet = async (message) => {
 // Test function to log a sample message to the sheet
 const testLogMessageToSheet = async () => {
     const testMessage = {
-        from: 'testUser',
+        channel: 'testUser', // Renamed from 'from' to 'channel'
         text: 'This is a test message',
         audio: false,
         metadata: { type: 'test' }

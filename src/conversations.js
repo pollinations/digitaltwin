@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const messagesDir = "./messageStore/patpapo";
+const messagesDir = "./messageStore/el405b";
 
 const ensureMessagesDirExists = () => {
   if (!fs.existsSync(messagesDir)) {
@@ -15,15 +15,15 @@ const saveMessageToFile = (userId, conversations) => {
   fs.writeFileSync(filePath, JSON.stringify(conversations[userId], null, 2));
 };
 
-export const addMessage = (conversations, userId, { content, role = "user" }) => {
+export const addMessage = (conversations, userId, message) => {
   conversations = {
     ...conversations,
     [userId]: [
       ...(conversations[userId] || []),
       {
-        content,
+        role: "user",
+        ...message,
         timestamp: new Date().getTime(),
-        role,
       },
     ],
   };

@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { SYSTEM_PROMPT } from "./persona.js";
+import { SYSTEM_PROMPT } from "../persona.js";
 
 const openai = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY'],
@@ -12,7 +12,7 @@ const openai = new OpenAI({
  * @returns {Promise<string>} - The chat response.
  */
 const getChatResponse = async (history, userId) => {
-  const simplifiedHistory = history.slice(-40).map(({ role, content }) => ({ role, content })).filter(({ content }) => content && content.trim() !== '');
+  const simplifiedHistory = history.slice(-40).map(({ role, content, name }) => ({ role, content, name: sanitizeName(name) })).filter(({ content }) => content && content.trim() !== '');
   const historyWithSystemPrompt = [
     {
       role: "system",
@@ -22,15 +22,30 @@ const getChatResponse = async (history, userId) => {
   ];
 
   console.log("calling chatgpt with history (last 3 shown)", historyWithSystemPrompt.slice(-3));
+
+  const responses = await Promise.all([
+    getOpenAIResponse(historyWithSystemPrompt),
+    getOpenAIResponse(historyWithSystemPrompt),
+    getOpenAIResponse(historyWithSystemPrompt)
+  ]);
+
+  const combinedResponse = responses.join('\n---\n');
+  console.log("got ai responses", combinedResponse);
+  return combinedResponse;
+};
+
+/**
+ * Gets a single response from OpenAI.
+ * @param {Array} messages - The chat messages.
+ * @returns {Promise<string>} - A single chat response.
+ */
+const getOpenAIResponse = async (messages) => {
   const chatCompletion = await openai.chat.completions.create({
-    messages: historyWithSystemPrompt,
+    messages: messages,
     model: process.env.OPENAI_GPT_MODEL || 'gpt-4o',
   });
 
-  let response = chatCompletion.choices[0].message.content;
-  console.log("got ai response", response);
-  const sanitizedResponse = fixWrongQuestionFormat(response);
-  return sanitizedResponse;
+  return chatCompletion.choices[0].message.content;
 };
 
 /**
@@ -46,11 +61,13 @@ const assistant = text => ({
 /**
  * Creates a user message object.
  * @param {string} text - The message content.
+ * @param {string} name - The user name.
  * @returns {Object} - The user message object.
  */
-const user = text => ({
+const user = (text, name = undefined) => ({
   content: text,
-  role: "user"
+  role: "user",
+  name: sanitizeName(name) // Ensure name is sanitized
 });
 
 /**
@@ -62,5 +79,14 @@ function fixWrongQuestionFormat(response) {
   return response; // response.split('\n').length > 1 && response.split('\n')[0].includes('?') ? response.split('\n')[0] : response;
 }
 
-export { getChatResponse, assistant, user };
+/**
+ * Sanitizes the name to match the required pattern.
+ * @param {string} name - The name to sanitize.
+ * @returns {string} - The sanitized name.
+ */
+function sanitizeName(name) {
+  if (!name) return name;
+  return name.replace(/[^a-zA-Z0-9_-]/g, '');
+}
 
+export { getChatResponse, assistant, user };
